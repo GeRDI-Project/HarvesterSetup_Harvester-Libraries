@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>de.gerdi-project</groupId>
+	<artifactId>GeRDI-harvester-setup</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	
+	<packaging>pom</packaging>
+	<name>Harvester Project Setup</name>
+	<description>This project sets up a harvester project when compiled.</description>
+	
+	<properties>
+		<harvestersetuparchive.dependency.version>1.0.0-SNAPSHOT</harvestersetuparchive.dependency.version>
+		<dependency.plugin.version>3.0.2</dependency.plugin.version>
+	</properties>
+	
+	<profiles>
+		<profile>
+			<id>setup</id>
+			<build>
+				<plugins>
+					<!-- Get All Files -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>${dependency.plugin.version}</version>
+						<executions>
+							<execution>
+								<id>unpack setup files</id>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+								<phase>generate-resources</phase>
+								<configuration>
+									<!--<includes>setup/**</includes>-->
+									<outputDirectory>${basedir}</outputDirectory>
+									<excludeTransitive>true</excludeTransitive>
+									<overWrite>false</overWrite>
+									<includeGroupIds>de.gerdi-project</includeGroupIds>
+									<includeTypes>zip</includeTypes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+					
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>GeRDI-harvester-setup-archive</artifactId>
+					<version>${harvestersetuparchive.dependency.version}</version>
+					<classifier>resources</classifier>
+					<type>zip</type>
+					<!-- Make sure this isn't included on any classpath-->
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+	
+	<modules>
+		<module>archive</module>
+	</modules>
+	
+	<!-- Define Sonatype repository for retrieving SNAPSHOT versions -->
+	<repositories>
+		<repository>
+			<id>Sonatype</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+</project>

@@ -1,0 +1,8 @@
+/target/
+/lib/
+/scripts/
+.project
+.classpath
+.settings/
+/bin/
+**/*.orig
