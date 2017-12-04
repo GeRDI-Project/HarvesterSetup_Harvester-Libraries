@@ -33,7 +33,7 @@ ProcessFilesInDir () {
 RenameFile  () {
  renamedFile=$(echo $1 | sed -e "s/\${providerClassName}/${providerClassName}/g" "s/\${void}//g")
  if [ "$renamedFile" != "$1" ]; then
-  mv $1 $renamedFile
+  mv -f $1 $renamedFile
  fi
 }
 
@@ -42,7 +42,7 @@ RenameDirectory  () {
  originalDir=$(realpath $1)
  renamedDir=$(realpath -q $(echo $1 | sed -e "s/\${providerPackageName}/${providerPackageName}/g"))
  if [ "$originalDir" != "$renamedDir" ]; then
-  mv $originalDir $renamedDir
+  mv -f $originalDir $renamedDir
  fi
 }
 
