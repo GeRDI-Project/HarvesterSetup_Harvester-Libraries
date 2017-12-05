@@ -19,14 +19,14 @@ ProcessFilesInDir () {
  for file in $1/*
  do
   if [ -d $file ]; then
-   ProcessFilesInDir $file
+   newDirName=$(RenameDirectory $file)
+   ProcessFilesInDir $newDirName
    
   elif [ -f $file ]; then
    RenameFileContent $file
    RenameFile $file
   fi
  done
- RenameDirectory $1
 }
 
 
@@ -44,6 +44,7 @@ RenameDirectory  () {
  if [ "$originalDir" != "$renamedDir" ]; then
   mv -f $originalDir $renamedDir
  fi
+ echo "$renamedDir"
 }
 
 
@@ -59,4 +60,4 @@ RenameFileContent  () {
 }
 
 
-ProcessFilesInDir src
+ProcessFilesInDir ${PWD}
