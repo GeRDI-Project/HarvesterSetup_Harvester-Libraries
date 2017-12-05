@@ -18,7 +18,7 @@
  */
 
 /**
- * This package contains utility classes for processing ${providerClassName} data.
+ * This package contains utility classes for processing ${providerName} data.
  *
  * @author ${authorFullName}
  */

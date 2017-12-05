@@ -18,7 +18,7 @@
  */
 
 /**
- * This package contains classes and packages that are related to ${providerClassName} JSON responses.
+ * This package contains classes and packages that are related to ${providerName} JSON responses.
  *
  * @author ${authorFullName}
  */

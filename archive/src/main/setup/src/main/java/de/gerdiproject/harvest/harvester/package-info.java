@@ -18,7 +18,7 @@
  */
 
 /**
- * This package contains classes and packages that are related to the {@linkplain de.gerdiproject.harvest.harvester.AbstractHarvester} and its sub-classes.
+ * This package contains classes and packages that are related to the {@linkplain de.gerdiproject.harvest.harvester.${providerClassName}Harvester} and its sub-classes.
  *
  * @author ${authorFullName}
  */

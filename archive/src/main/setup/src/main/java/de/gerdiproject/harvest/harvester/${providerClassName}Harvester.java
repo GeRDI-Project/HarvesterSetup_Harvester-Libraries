@@ -22,7 +22,7 @@ import de.gerdiproject.harvest.harvester.AbstractHarvester;
 
 
 /**
- * A harvester for ${providerClassName} (${providerUrl}).
+ * A harvester for ${providerName} (${providerUrl}).
  *
  * @author ${authorFullName}
  */
