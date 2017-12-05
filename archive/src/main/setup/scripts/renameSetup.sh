@@ -51,6 +51,7 @@ RenameDirectory  () {
 RenameFileContent  () {
  sed --in-place=.tmp -e "s/\${providerPackageName}/${providerPackageName}/g" \
       --in-place=.tmp -e "s/\${providerClassName}/${providerClassName}/g" \
+      --in-place=.tmp -e "s/\${providerName}/${providerName}/g" \
       --in-place=.tmp -e "s/\${providerUrl}/${providerUrl}/g" \
       --in-place=.tmp -e "s/\${authorFullName}/${authorFullName}/g" \
       --in-place=.tmp -e "s/\${authorEmail}/${authorEmail}/g" \
