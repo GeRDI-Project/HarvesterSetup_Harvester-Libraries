@@ -34,6 +34,6 @@ public class HarvesterFilenameFilter implements FilenameFilter
     @Override
     public boolean accept(File file, String fileName)
     {
-        return BambooConstants.HARVESTER_FILE_PATTERN.matcher( fileName ).matches();
+        return BambooConstants.HARVESTER_FILE_PATTERN.matcher(fileName).matches();
     }
 }

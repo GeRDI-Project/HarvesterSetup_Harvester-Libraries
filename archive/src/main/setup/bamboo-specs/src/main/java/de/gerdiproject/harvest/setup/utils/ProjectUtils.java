@@ -43,21 +43,21 @@ import de.gerdiproject.harvest.setup.constants.BambooConstants;
  */
 public class ProjectUtils
 {
-	private final String projectRootDirectory;
+    private final String projectRootDirectory;
     /**
      */
     public ProjectUtils()
     {
-    	projectRootDirectory = getProjectRootDirectory();
+        projectRootDirectory = getProjectRootDirectory();
     }
-    
-    
+
+
     public String getProviderClassName()
     {
-    	String providerClassName = null;
-    	File harvesterDir = new File( String.format( BambooConstants.MAIN_HARVESTER_PATH, projectRootDirectory ));
-    	
-    	if (harvesterDir.exists() && harvesterDir.isDirectory()) {
+        String providerClassName = null;
+        File harvesterDir = new File(String.format(BambooConstants.MAIN_HARVESTER_PATH, projectRootDirectory));
+
+        if (harvesterDir.exists() && harvesterDir.isDirectory()) {
             File[] harvesterFiles;
 
             // try to get all cache files in the folder
@@ -69,45 +69,42 @@ public class ProjectUtils
 
             // only continue if there are matching files
             if (harvesterFiles != null) {
-            	long oldestFileCreationDate = Long.MAX_VALUE;
-            	File oldestHarvesterFile = null;
-            	
+                long oldestFileCreationDate = Long.MAX_VALUE;
+                File oldestHarvesterFile = null;
+
                 for (File harvesterFile : harvesterFiles) {
-					try
-					{
-						// read the creation date of the file
-						BasicFileAttributes fileAttributes = Files.readAttributes( harvesterFile.toPath(), BasicFileAttributes.class );
-						long fileCreationDate = fileAttributes.creationTime().toMillis();
-	                	
-						if(fileCreationDate < oldestFileCreationDate)
-	                	{
-	                		oldestFileCreationDate = fileCreationDate;
-	                		oldestHarvesterFile = harvesterFile;
-	                	}
-					}
-					catch (IOException e)
-					{
-						// nothing todo here, just skip the file
-					}
+                    try {
+                        // read the creation date of the file
+                        BasicFileAttributes fileAttributes = Files.readAttributes(harvesterFile.toPath(), BasicFileAttributes.class);
+                        long fileCreationDate = fileAttributes.creationTime().toMillis();
+
+                        if (fileCreationDate < oldestFileCreationDate) {
+                            oldestFileCreationDate = fileCreationDate;
+                            oldestHarvesterFile = harvesterFile;
+                        }
+                    } catch (IOException e) {
+                        // nothing todo here, just skip the file
+                    }
                 }
+
                 // if we found an oldest harvester file, retrieve the prefix
-                if( oldestHarvesterFile != null)
-                {
-                	Matcher fileNameMatcher = BambooConstants.HARVESTER_FILE_PATTERN.matcher( oldestHarvesterFile.getName() );
-                	if( fileNameMatcher.matches())
-                		providerClassName = fileNameMatcher.group( 1 );
+                if (oldestHarvesterFile != null) {
+                    Matcher fileNameMatcher = BambooConstants.HARVESTER_FILE_PATTERN.matcher(oldestHarvesterFile.getName());
+
+                    if (fileNameMatcher.matches())
+                        providerClassName = fileNameMatcher.group(1);
                 }
             }
         }
-    	
-    	return providerClassName;
+
+        return providerClassName;
     }
 
 
     public List<String> getDeveloperEmailAddresses()
     {
         List<String> mailList = new LinkedList<>();
-        
+
         try {
             // open pom.xml
             String pomPath = String.format(BambooConstants.POM_XML_PATH, projectRootDirectory);
@@ -118,50 +115,49 @@ public class ProjectUtils
 
             // look for developer email addresses in the pom.xml
             String line = pomReader.readLine();
-            
+
             // skip everything before the <developers> tag
-            while (line != null && !line.contains( BambooConstants.DEVELOPERS_OPENING_TAG))
+            while (line != null && !line.contains(BambooConstants.DEVELOPERS_OPENING_TAG))
                 line = pomReader.readLine();
-           
+
             // look for <email> tags, abort when the </developers> end-tag is found
-            while (line != null && !line.contains( BambooConstants.DEVELOPERS_CLOSING_TAG )) {
-        		Matcher emailMatcher = BambooConstants.EMAIL_TAG_PATTERN.matcher(line);
-        		
-                if (emailMatcher.matches()) 
-                	mailList.add( emailMatcher.group(1));
+            while (line != null && !line.contains(BambooConstants.DEVELOPERS_CLOSING_TAG)) {
+                Matcher emailMatcher = BambooConstants.EMAIL_TAG_PATTERN.matcher(line);
+
+                if (emailMatcher.matches())
+                    mailList.add(emailMatcher.group(1));
 
                 line = pomReader.readLine();
             }
+
             pomReader.close();
-            
+
         } catch (IOException e) {
             // nothing to do here
         }
-        
+
         return mailList;
     }
-    
-    
+
+
     private String getProjectRootDirectory()
     {
-    	String projectRootDir = null;
-		try
-		{
-			Process pr = Runtime.getRuntime().exec(BambooConstants.GIT_GET_ROOT_COMMAND);
-	
-	        BufferedReader gitRootCommandReader = new BufferedReader(
-	            new InputStreamReader(
-	                pr.getInputStream(),
-	                StandardCharsets.UTF_8));
-	        projectRootDir = gitRootCommandReader.readLine();
-	        
-		}
-		catch (IOException e)
-		{
+        String projectRootDir = null;
+
+        try {
+            Process pr = Runtime.getRuntime().exec(BambooConstants.GIT_GET_ROOT_COMMAND);
+
+            BufferedReader gitRootCommandReader = new BufferedReader(
+                new InputStreamReader(
+                    pr.getInputStream(),
+                    StandardCharsets.UTF_8));
+            projectRootDir = gitRootCommandReader.readLine();
+
+        } catch (IOException e) {
             // nothing to do here
-		}
-		
-		return projectRootDir;
+        }
+
+        return projectRootDir;
     }
 
 
@@ -190,6 +186,7 @@ public class ProjectUtils
 
                 line = gitConfigReader.readLine();
             }
+
             gitConfigReader.close();
         } catch (IOException e) {
             // nothing to do here
@@ -201,7 +198,7 @@ public class ProjectUtils
 
     public BambooKey createBambooKey(String providerClassName)
     {
-        return new BambooKey (providerClassName.replaceAll("[a-z]", "") + "HAR");
+        return new BambooKey(providerClassName.replaceAll("[a-z]", "") + "HAR");
     }
 
 }

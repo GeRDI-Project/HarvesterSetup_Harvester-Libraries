@@ -58,34 +58,34 @@ public class HarvesterBambooSpecs
     public static void main(String[] args)
     {
         final BambooServer bambooServer = getBambooServer();
-    	
+
         final ProjectUtils utils = new ProjectUtils();
         final String repositorySlug = utils.getRepositorySlug();
         final List<String> devEmails = utils.getDeveloperEmailAddresses();
         final String providerClassName = utils.getProviderClassName();
         final BambooKey bambooKey = utils.createBambooKey(providerClassName);
-        
+
         System.out.println("providerClassName: " + providerClassName);
         System.out.println("repositorySlug: " + repositorySlug);
         System.out.println("bambooKey: " + bambooKey);
         System.out.println("emails: ");
         devEmails.forEach((String email) -> System.out.println(email));
 
-        BitbucketServerRepository repository = createRepository( providerClassName, repositorySlug );
+        BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
         Plan staticAnalysisPlan = createStaticAnalysisPlan(repository, bambooKey, providerClassName);
-        publishPlan( bambooServer, staticAnalysisPlan, devEmails );
+        publishPlan(bambooServer, staticAnalysisPlan, devEmails);
 
         Plan deploymentPlan = createDeploymentPlan(repository, bambooKey, providerClassName);
-        publishPlan( bambooServer, deploymentPlan, devEmails );
+        publishPlan(bambooServer, deploymentPlan, devEmails);
     }
-    
-    
+
+
     private static BambooServer getBambooServer()
     {
-    	return new BambooServer("https://ci.gerdi-project.de");
+        return new BambooServer("https://ci.gerdi-project.de");
     }
-    
+
 
     private static BitbucketServerRepository createRepository(String providerClassName, String repositorySlug)
     {
@@ -175,9 +175,9 @@ public class HarvesterBambooSpecs
     }
 
 
-    private static void publishPlan( BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
+    private static void publishPlan(BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
     {
-    	bambooServer.publish(plan);
+        bambooServer.publish(plan);
 
         for (String devEmail : developerEmailAddresses) {
             PlanPermissions planPermission = new PlanPermissions(plan.getIdentifier());

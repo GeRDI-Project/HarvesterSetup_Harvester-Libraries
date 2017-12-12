@@ -8,7 +8,7 @@ GetProviderClassName () {
 
 
 GetProviderPackageName () {
- echo ${providerClassName} | tr '[:upper:]' '[:lower:]'
+ echo "$1" | tr '[:upper:]' '[:lower:]'
 }
 
 

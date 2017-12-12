@@ -40,10 +40,10 @@ import com.atlassian.bamboo.specs.builders.task.VcsCheckoutTask;
  */
 public class BambooConstants
 {
-	// Files
+    // Files
     public static final String MAIN_HARVESTER_PATH = "%s/src/main/java/de/gerdiproject/harvest/harvester/";
-    public static final Pattern HARVESTER_FILE_PATTERN = Pattern.compile( "(\\w+)Harvester.java");
-    
+    public static final Pattern HARVESTER_FILE_PATTERN = Pattern.compile("(\\w+)Harvester.java");
+
     // GIT
     public static final String GIT_CONFIG_PATH = "%s/.git/config";
     public static final String GIT_GET_ROOT_COMMAND = "git rev-parse --show-toplevel";
@@ -54,16 +54,16 @@ public class BambooConstants
     public static final Pattern EMAIL_TAG_PATTERN = Pattern.compile("\\s*<email>([\\d\\D]+?)</email>\\s*");
     public static final String DEVELOPERS_OPENING_TAG = "<developers>";
     public static final String DEVELOPERS_CLOSING_TAG = "</developers>";
-    
+
     // Bamboo Names
     public static final String DEFAULT_STAGE = "Default Stage";
     public static final String DEFAULT_JOB = "Default Job";
     public static final String DEPLOY_PLAN_NAME = "Deploy %s-Harvester";
     public static final String ANALYSIS_PLAN_NAME = "Static Analysis: %s-Harvester";
-    
+
     public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
 
-    
+
     // GeRDI Bamboo Projects
     public static final Project ANALYSIS_PROJECT = new Project()
     .oid(new BambooOid("tfn4xj9wxfcx"))
@@ -83,13 +83,13 @@ public class BambooConstants
     .location("target")
     .shared(true);
 
-    
+
     // GeRDI Bamboo Tasks
     public static final Task<?, ?> REPOSITORY_CHECKOUT_TASK = new VcsCheckoutTask()
     .description("Checkout Default Repository")
     .checkoutItems(new CheckoutItem().defaultRepository());
 
-    
+
     // Bamboo Branch Management
     public static final PlanBranchManagement MANUAL_BRANCH_MANAGEMENT  = new PlanBranchManagement()
     .delete(new BranchCleanup())
@@ -128,8 +128,8 @@ public class BambooConstants
         + "  echo \"All files are properly formatted!\"\n"
         + "  exit 0\n"
         + "fi";
-    
-    
+
+
     /**
      * Private Constructor, because this is a static class.
      */
