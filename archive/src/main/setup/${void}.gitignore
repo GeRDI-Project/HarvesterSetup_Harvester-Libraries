@@ -1,6 +1,7 @@
 /target/
 /lib/
 /scripts/
+/bamboo-specs/
 .project
 .classpath
 .settings/
