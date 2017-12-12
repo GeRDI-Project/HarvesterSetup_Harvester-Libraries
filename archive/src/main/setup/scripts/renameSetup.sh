@@ -90,8 +90,8 @@ parentHarvesterVersion=$7
 
 # create class and package names by removing illegal chars and forcing camel-case
 illegalChars="  _-\\/{}()"
-providerClassName="$(GetProviderClassName $providerName $illegalChars)"
-providerPackageName="$(GetProviderPackageName $providerClassName)"
+providerClassName=$(GetProviderClassName "$providerName" "$illegalChars")
+providerPackageName=$(GetProviderPackageName "$providerClassName")
 
 # run the main function on the current folder
 ProcessFilesInDir ${PWD}
