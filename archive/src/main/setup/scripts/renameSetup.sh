@@ -3,7 +3,7 @@ echo "Renaming setup files"
 # function definitions
 
 GetProviderClassName () {
- echo "$1" | sed -e "s/[$illegalChars]\(\\w\)/\U\1/g" -e "s/[$illegalChars]//g" -e "s/^\(\\w\)/\U\1/g"
+ echo "$1" | sed -e "s/[$2]\(\\w\)/\U\1/g" -e "s/[$2]//g" -e "s/^\(\\w\)/\U\1/g"
 }
 
 
@@ -90,8 +90,8 @@ parentHarvesterVersion=$7
 
 # create class and package names by removing illegal chars and forcing camel-case
 illegalChars="  _-\\/{}()"
-providerClassName=$(GetProviderClassName $providerName)
-providerPackageName=$(GetProviderPackageName $providerClassName)
+providerClassName="$(GetProviderClassName $providerName $illegalChars)"
+providerPackageName="$(GetProviderPackageName $providerClassName)"
 
 # run the main function on the current folder
 ProcessFilesInDir ${PWD}
