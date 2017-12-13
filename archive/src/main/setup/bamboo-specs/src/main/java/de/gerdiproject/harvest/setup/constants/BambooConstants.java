@@ -68,6 +68,8 @@ public class BambooConstants
 
 
     // GeRDI Bamboo Projects
+    public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
+
     public static final Project ANALYSIS_PROJECT = new Project()
     .oid(new BambooOid("tfn4xj9wxfcx"))
     .key(new BambooKey("CA"))

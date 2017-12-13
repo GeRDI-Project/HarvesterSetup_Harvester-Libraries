@@ -20,6 +20,8 @@ package de.gerdiproject.harvest.setup;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.atlassian.bamboo.specs.api.BambooSpec;
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
@@ -30,6 +32,7 @@ import com.atlassian.bamboo.specs.api.builders.permission.Permissions;
 import com.atlassian.bamboo.specs.api.builders.permission.PlanPermissions;
 import com.atlassian.bamboo.specs.api.builders.plan.Job;
 import com.atlassian.bamboo.specs.api.builders.plan.Plan;
+import com.atlassian.bamboo.specs.api.builders.plan.PlanIdentifier;
 import com.atlassian.bamboo.specs.api.builders.plan.Stage;
 import com.atlassian.bamboo.specs.api.builders.plan.branches.BranchCleanup;
 import com.atlassian.bamboo.specs.api.builders.plan.branches.PlanBranchManagement;
@@ -44,6 +47,7 @@ import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 import com.atlassian.bamboo.specs.util.BambooServer;
 
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
+import de.gerdiproject.harvest.setup.constants.LoggingConstants;
 import de.gerdiproject.harvest.setup.utils.ProjectUtils;
 
 /**
@@ -55,6 +59,9 @@ import de.gerdiproject.harvest.setup.utils.ProjectUtils;
 @BambooSpec
 public class HarvesterBambooSpecs
 {
+    private static Logger LOGGER = LoggerFactory.getLogger(HarvesterBambooSpecs.class);
+
+
     /**
      * The main function that is called via 'mvn -Ppublish-specs' from the command line.
      *
@@ -65,18 +72,19 @@ public class HarvesterBambooSpecs
         final ProjectUtils utils = new ProjectUtils();
 
         final String providerClassName = utils.getProviderClassName();
-        System.out.println("ProviderClassName: " + providerClassName);
+        LOGGER.info(LoggingConstants.PROVIDER_CLASS_NAME + providerClassName);
 
         final String repositorySlug = utils.getRepositorySlug();
-        System.out.println("RepositorySlug: " + repositorySlug);
+        LOGGER.info(LoggingConstants.REPOSITORY_SLUG + repositorySlug);
 
         final BambooKey bambooKey = utils.createBambooKey(providerClassName);
-        System.out.println("BambooKey: " + bambooKey);
+        LOGGER.info(LoggingConstants.BAMBOO_KEY + bambooKey);
 
         final List<String> devEmails = utils.getDeveloperEmailAddresses();
-        final StringBuilder sb = new StringBuilder("DeveloperEmails:");
+        final StringBuilder sb = new StringBuilder(LoggingConstants.DEVELOPER_EMAILS);
+
         devEmails.forEach((String email) -> sb.append(' ').append(email));
-        System.out.println(sb.toString());
+        LOGGER.info(sb.toString());
 
         final BambooServer bambooServer = getBambooServer();
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
@@ -96,7 +104,8 @@ public class HarvesterBambooSpecs
      */
     private static BambooServer getBambooServer()
     {
-        return new BambooServer("https://ci.gerdi-project.de");
+        LOGGER.info(String.format(LoggingConstants.CONNECTING_TO_SERVER, BambooConstants.BAMBOO_SERVER));
+        return new BambooServer(BambooConstants.BAMBOO_SERVER);
     }
 
 
@@ -223,10 +232,13 @@ public class HarvesterBambooSpecs
      */
     private static void publishPlan(BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
     {
+        PlanIdentifier planId = plan.getIdentifier();
+        LOGGER.info(String.format(LoggingConstants.PUBLISH_PLAN, planId.toString(), bambooServer.getBaseUrl().toString()));
+
         bambooServer.publish(plan);
 
         for (String devEmail : developerEmailAddresses) {
-            PlanPermissions planPermission = new PlanPermissions(plan.getIdentifier());
+            PlanPermissions planPermission = new PlanPermissions(planId);
             planPermission.permissions(new Permissions()
                                        .userPermissions(devEmail,
                                                         PermissionType.EDIT,

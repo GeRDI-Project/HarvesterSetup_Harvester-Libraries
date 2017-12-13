@@ -200,7 +200,6 @@ public class ProjectUtils
             String line = gitConfigReader.readLine();
 
             while (line != null) {
-                System.out.println(line);
                 Matcher lineMatcher = BambooConstants.REPOSITORY_SLUG_PATTERN.matcher(line);
 
                 if (lineMatcher.matches()) {
