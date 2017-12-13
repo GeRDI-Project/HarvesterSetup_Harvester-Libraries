@@ -55,6 +55,11 @@ import de.gerdiproject.harvest.setup.utils.ProjectUtils;
 @BambooSpec
 public class HarvesterBambooSpecs
 {
+	/**
+	 * The main function that is called via 'mvn -Ppublish-specs' from the command line.
+	 * 
+	 * @param args arguments for the function. If you know how to pass them via Maven, give me a call!
+	 */
     public static void main(String[] args)
     {
         final BambooServer bambooServer = getBambooServer();
@@ -81,12 +86,25 @@ public class HarvesterBambooSpecs
     }
 
 
+    /**
+     * Sets up a connection to a Bamboo server.
+     * 
+     * @return a Bamboo server connection
+     */
     private static BambooServer getBambooServer()
     {
         return new BambooServer("https://ci.gerdi-project.de");
     }
 
 
+    /**
+     * Creates a BitBucket repository for a harvester service.
+     * 
+     * @param providerClassName the name of the provider in camel case
+     * @param repositorySlug the name of the harvester service in a BitBucket URL
+     * 
+     * @return a BitBucket repository for a harvester service
+     */
     private static BitbucketServerRepository createRepository(String providerClassName, String repositorySlug)
     {
         return new BitbucketServerRepository()
@@ -104,6 +122,15 @@ public class HarvesterBambooSpecs
     }
 
 
+    /**
+     * Creates a harvester deployment plan.
+     * 
+     * @param repository the repository that is linked to the plan
+     * @param bambooKey the bamboo key of the plan
+     * @param providerClassName the name of the provider in camel case
+     * 
+     * @return a harvester deployment plan
+     */
     private static Plan createDeploymentPlan(BitbucketServerRepository repository, BambooKey bambooKey, String providerClassName)
     {
         final Plan deploymentPlan = new Plan(
@@ -136,6 +163,15 @@ public class HarvesterBambooSpecs
     }
 
 
+    /**
+     * Creates a code analysis plan for the harvester service.
+     * 
+     * @param repository the repository that is linked to the plan
+     * @param bambooKey the bamboo key of the plan
+     * @param providerClassName the name of the provider in camel case
+     * 
+     * @return a code analysis plan for the harvester service
+     */
     private static Plan createStaticAnalysisPlan(BitbucketServerRepository repository, BambooKey bambooKey, String providerClassName)
     {
         Plan analysisPlan = new Plan(
@@ -175,6 +211,13 @@ public class HarvesterBambooSpecs
     }
 
 
+    /**
+     * Publishes a plan on a specified Bamboo server.
+     * 
+     * @param bambooServer the server on which the plan is published
+     * @param plan the plan that is to be published
+     * @param developerEmailAddresses email addresses of developers that will get access rights to the plan
+     */
     private static void publishPlan(BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
     {
         bambooServer.publish(plan);
