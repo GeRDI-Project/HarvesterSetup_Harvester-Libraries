@@ -40,10 +40,7 @@ import com.atlassian.bamboo.specs.api.builders.plan.configuration.ConcurrentBuil
 import com.atlassian.bamboo.specs.api.builders.repository.VcsChangeDetection;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepositoryViewer;
-import com.atlassian.bamboo.specs.builders.task.MavenTask;
-import com.atlassian.bamboo.specs.builders.task.ScriptTask;
 import com.atlassian.bamboo.specs.builders.trigger.BitbucketServerTrigger;
-import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 import com.atlassian.bamboo.specs.util.BambooServer;
 
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
@@ -82,7 +79,6 @@ public class HarvesterBambooSpecs
 
         final List<String> devEmails = utils.getDeveloperEmailAddresses();
         final StringBuilder sb = new StringBuilder(LoggingConstants.DEVELOPER_EMAILS);
-
         devEmails.forEach((String email) -> sb.append(' ').append(email));
         LOGGER.info(sb.toString());
 
@@ -120,14 +116,14 @@ public class HarvesterBambooSpecs
     private static BitbucketServerRepository createRepository(String providerClassName, String repositorySlug)
     {
         return new BitbucketServerRepository()
-               .name(providerClassName + "-Harvester")
+               .name(String.format(BambooConstants.BITBUCKET_HARVESTER_NAME, providerClassName))
                .repositoryViewer(new BitbucketServerRepositoryViewer())
                .server(new ApplicationLink()
-                       .name("Bitbucket")
-                       .id("f0c4a002-9d93-3ac9-b18b-296394ec3180"))
-               .projectKey("HAR")
+                       .name(BambooConstants.BITBUCKET)
+                       .id(BambooConstants.BITBUCKET_ID))
+               .projectKey(BambooConstants.BITBUCKET_HARVESTER_PROJECT)
                .repositorySlug(repositorySlug)
-               .branch("master")
+               .branch(BambooConstants.GIT_MASTER_BRANCH)
                .shallowClonesEnabled(true)
                .remoteAgentCacheEnabled(false)
                .changeDetection(new VcsChangeDetection());
@@ -145,32 +141,27 @@ public class HarvesterBambooSpecs
      */
     private static Plan createDeploymentPlan(BitbucketServerRepository repository, BambooKey bambooKey, String providerClassName)
     {
+        // set up plan
         final Plan deploymentPlan = new Plan(
             BambooConstants.DEPLOYMENT_PROJECT,
-            String.format(BambooConstants.DEPLOY_PLAN_NAME, providerClassName),
-            bambooKey
-        );
-
-        final Job defaultJob = new Job(
-            BambooConstants.DEFAULT_JOB,
-            BambooConstants.DEFAULT_JOB_KEY
-        );
-
-        // set up plan
-        deploymentPlan.description("Builds a Docker Image of the Harvester and registers it at the Docker Registry.");
+            String.format(BambooConstants.DEPLOYMENT_PLAN_NAME, providerClassName),
+            bambooKey);
+        deploymentPlan.description(BambooConstants.ANALYSIS_PLAN_DESCRIPTION);
         deploymentPlan.pluginConfigurations(new ConcurrentBuilds().useSystemWideDefault(false));
         deploymentPlan.planRepositories(repository);
-        deploymentPlan.variables(new Variable("passwordGit", ""));
+        deploymentPlan.variables(new Variable(BambooConstants.PASSWORD_VARIABLE_KEY, ""));
         deploymentPlan.planBranchManagement(BambooConstants.MANUAL_BRANCH_MANAGEMENT);
-        deploymentPlan.stages(new Stage(BambooConstants.DEFAULT_STAGE).jobs(defaultJob));
 
         // set up job
+        final Job defaultJob = new Job(
+            BambooConstants.DEFAULT_JOB,
+            BambooConstants.DEFAULT_JOB_KEY);
         defaultJob.artifacts(BambooConstants.WAR_FILE_ARTIFACT);
         defaultJob.tasks(BambooConstants.REPOSITORY_CHECKOUT_TASK,
-                         new ScriptTask()
-                         .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
-                         .inlineBody(BambooConstants.MAVEN_DOCKER_PUSH_SCRIPT));
+                         BambooConstants.MAVEN_DOCKER_PUSH_TASK);
 
+        // add job to plan
+        deploymentPlan.stages(new Stage(BambooConstants.DEFAULT_STAGE).jobs(defaultJob));
         return deploymentPlan;
     }
 
@@ -186,39 +177,34 @@ public class HarvesterBambooSpecs
      */
     private static Plan createStaticAnalysisPlan(BitbucketServerRepository repository, BambooKey bambooKey, String providerClassName)
     {
+        // set up plan
         Plan analysisPlan = new Plan(
             BambooConstants.ANALYSIS_PROJECT,
             String.format(BambooConstants.ANALYSIS_PLAN_NAME, providerClassName),
             bambooKey);
-
-        analysisPlan.description("Static Analysis of the ${providerName} Harvester.");
+        analysisPlan.description(BambooConstants.DEPLOYMENT_PLAN_DESCRIPTION);
         analysisPlan.pluginConfigurations(new ConcurrentBuilds().useSystemWideDefault(false));
         analysisPlan.planRepositories(repository);
         analysisPlan.triggers(new BitbucketServerTrigger());
 
-        analysisPlan.stages(new Stage("Default Stage")
-                            .jobs(new Job("Code Formatting", new BambooKey("JOB1"))
-                                  .description("Checks if the committed code compiles and is formatted via AStyle")
-                                  .tasks(
-                                      BambooConstants.REPOSITORY_CHECKOUT_TASK,
-                                      new MavenTask()
-                                      .description("Maven: Clean, Test, Verify")
-                                      .goal("clean test verify")
-                                      .jdk("JDK 1.8")
-                                      .executableLabel("Maven 3")
-                                      .hasTests(true)
-                                      .useMavenReturnCode(true),
-                                      new ScriptTask()
-                                      .description("AStyle Formatting-Check")
-                                      .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
-                                      .inlineBody(BambooConstants.ASTYLE_CHECK_SCRIPT))));
+        // set up job
+        final Job defaultJob = new Job(
+            BambooConstants.DEFAULT_JOB,
+            BambooConstants.DEFAULT_JOB_KEY);
+
+        defaultJob.tasks(
+            BambooConstants.REPOSITORY_CHECKOUT_TASK,
+            BambooConstants.MAVEN_INSTALL_TASK,
+            BambooConstants.ASTYLE_CHECK_TASK);
+
+        // add job to plan
+        analysisPlan.stages(new Stage(BambooConstants.DEFAULT_STAGE).jobs(defaultJob));
 
         // auto-create plan branches, delete them after 1 day when the branch is removed in the repository
         analysisPlan.planBranchManagement(new PlanBranchManagement()
                                           .createForVcsBranch()
                                           .delete(new BranchCleanup().whenRemovedFromRepositoryAfterDays(1))
                                           .notificationForCommitters());
-
         return analysisPlan;
     }
 
@@ -233,8 +219,6 @@ public class HarvesterBambooSpecs
     private static void publishPlan(BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
     {
         PlanIdentifier planId = plan.getIdentifier();
-        LOGGER.info(String.format(LoggingConstants.PUBLISH_PLAN, planId.toString(), bambooServer.getBaseUrl().toString()));
-
         bambooServer.publish(plan);
 
         for (String devEmail : developerEmailAddresses) {

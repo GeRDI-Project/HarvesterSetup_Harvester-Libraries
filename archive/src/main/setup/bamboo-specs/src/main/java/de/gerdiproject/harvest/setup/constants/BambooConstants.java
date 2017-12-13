@@ -28,7 +28,10 @@ import com.atlassian.bamboo.specs.api.builders.plan.branches.PlanBranchManagemen
 import com.atlassian.bamboo.specs.api.builders.project.Project;
 import com.atlassian.bamboo.specs.api.builders.task.Task;
 import com.atlassian.bamboo.specs.builders.task.CheckoutItem;
+import com.atlassian.bamboo.specs.builders.task.MavenTask;
+import com.atlassian.bamboo.specs.builders.task.ScriptTask;
 import com.atlassian.bamboo.specs.builders.task.VcsCheckoutTask;
+import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 
 
 
@@ -49,6 +52,13 @@ public class BambooConstants
     public static final String GIT_GET_ROOT_COMMAND = "git rev-parse --show-toplevel";
     public static final Pattern REPOSITORY_SLUG_PATTERN = Pattern.compile("\\s*url\\s?=[\\d\\D]+?/([^/]+?).git");
 
+    public static final String BITBUCKET_HARVESTER_NAME = "%s-Harvester";
+    public static final String BITBUCKET = "Bitbucket";
+    public static final String BITBUCKET_ID = "f0c4a002-9d93-3ac9-b18b-296394ec3180";
+    public static final String BITBUCKET_HARVESTER_PROJECT = "HAR";
+    public static final String GIT_MASTER_BRANCH = "master";
+
+
     // Maven
     public static final String POM_XML_PATH = "%s/pom.xml";
     public static final Pattern EMAIL_TAG_PATTERN = Pattern.compile("\\s*<email>([\\d\\D]+?)</email>\\s*");
@@ -58,14 +68,17 @@ public class BambooConstants
     // Bamboo Names
     public static final String DEFAULT_STAGE = "Default Stage";
     public static final String DEFAULT_JOB = "Default Job";
-    public static final String DEPLOY_PLAN_NAME = "Deploy %s-Harvester";
-    public static final String ANALYSIS_PLAN_NAME = "Static Analysis: %s-Harvester";
+    public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
     public static final String HARVESTER_ABBREVIATION = "HAR";
     public static final String LOWER_CASE_REGEX = "[a-z]";
 
+    public static final String PASSWORD_VARIABLE_KEY = "passwordGit";
 
-    public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
+    public static final String ANALYSIS_PLAN_NAME = "Static Analysis: %s-Harvester";
+    public static final String ANALYSIS_PLAN_DESCRIPTION = "Static Analysis of the ${providerName} Harvester.";
 
+    public static final String DEPLOYMENT_PLAN_NAME = "Deploy %s-Harvester";
+    public static final String DEPLOYMENT_PLAN_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
 
     // GeRDI Bamboo Projects
     public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
@@ -95,18 +108,26 @@ public class BambooConstants
     .checkoutItems(new CheckoutItem().defaultRepository());
 
 
-    // Bamboo Branch Management
-    public static final PlanBranchManagement MANUAL_BRANCH_MANAGEMENT  = new PlanBranchManagement()
-    .delete(new BranchCleanup())
-    .notificationForCommitters();
+    public static final Task<?, ?> MAVEN_INSTALL_TASK = new MavenTask()
+    .description("Maven: Clean, Install")
+    .goal("clean install")
+    .jdk("JDK 1.8")
+    .executableLabel("Maven 3")
+    .hasTests(true)
+    .useMavenReturnCode(true);
 
 
-    // Scripts
-    public static final String MAVEN_DOCKER_PUSH_SCRIPT =
+    public static final Task<?, ?> MAVEN_DOCKER_PUSH_TASK = new ScriptTask()
+    .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
+    .inlineBody(
         "# for some reason, the Maven 3.x Bamboo Task interprets multiple arguments as one, so we need to use a script instead\n"
-        + "mvn clean verify -PdockerPush -Dexec.args=\"<maven> <gerdi>\"";
+        + "mvn clean verify -PdockerPush -Dexec.args=\"<maven> <gerdi>\"");
 
-    public static final String ASTYLE_CHECK_SCRIPT =
+
+    public static final Task<?, ?> ASTYLE_CHECK_TASK = new ScriptTask()
+    .description("AStyle Formatting-Check")
+    .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
+    .inlineBody(
         "echo \"\\\\nChecking code formatting:\"\n\n"
         + "formattingStyle=\"kr\"\n"
         + "sourcePath=\"src\\\\\"\n"
@@ -132,7 +153,13 @@ public class BambooConstants
         + "else\n"
         + "  echo \"All files are properly formatted!\"\n"
         + "  exit 0\n"
-        + "fi";
+        + "fi");
+
+
+    // Bamboo Branch Management
+    public static final PlanBranchManagement MANUAL_BRANCH_MANAGEMENT  = new PlanBranchManagement()
+    .delete(new BranchCleanup())
+    .notificationForCommitters();
 
 
     /**

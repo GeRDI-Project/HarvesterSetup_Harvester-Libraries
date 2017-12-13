@@ -27,7 +27,6 @@ package de.gerdiproject.harvest.setup.constants;
  */
 public class LoggingConstants
 {
-    public static final String PUBLISH_PLAN = "Publishing '%s'to %s";
     public static final String PROVIDER_CLASS_NAME = "ProviderClassName: ";
     public static final String REPOSITORY_SLUG = "RepositorySlug: ";
     public static final String BAMBOO_KEY = "BambooKey: ";
