@@ -200,7 +200,7 @@ public class ProjectUtils
             String line = gitConfigReader.readLine();
 
             while (line != null) {
-            	System.out.println( line );
+                System.out.println(line);
                 Matcher lineMatcher = BambooConstants.REPOSITORY_SLUG_PATTERN.matcher(line);
 
                 if (lineMatcher.matches()) {
@@ -210,11 +210,12 @@ public class ProjectUtils
 
                 line = gitConfigReader.readLine();
             }
+
             gitConfigReader.close();
         } catch (IOException e) {
             // nothing to do here
-        	e.printStackTrace();
         }
+
         return repositorySlug;
     }
 
@@ -228,6 +229,8 @@ public class ProjectUtils
      */
     public BambooKey createBambooKey(String providerClassName)
     {
-        return new BambooKey(providerClassName.replaceAll("[a-z]", "") + "HAR");
+        return new BambooKey(
+                   providerClassName.replaceAll(BambooConstants.LOWER_CASE_REGEX, "")
+                   + BambooConstants.HARVESTER_ABBREVIATION);
     }
 }

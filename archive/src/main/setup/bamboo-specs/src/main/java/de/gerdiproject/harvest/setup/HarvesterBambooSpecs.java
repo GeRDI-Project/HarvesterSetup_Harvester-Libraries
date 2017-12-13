@@ -66,17 +66,17 @@ public class HarvesterBambooSpecs
 
         final String providerClassName = utils.getProviderClassName();
         System.out.println("ProviderClassName: " + providerClassName);
-        
+
         final String repositorySlug = utils.getRepositorySlug();
         System.out.println("RepositorySlug: " + repositorySlug);
-        
+
         final BambooKey bambooKey = utils.createBambooKey(providerClassName);
         System.out.println("BambooKey: " + bambooKey);
-        
+
         final List<String> devEmails = utils.getDeveloperEmailAddresses();
-        System.out.print("DeveloperEmails: ");
-        devEmails.forEach((String email) -> System.out.print(email + " "));
-        System.out.println();
+        final StringBuilder sb = new StringBuilder("DeveloperEmails:");
+        devEmails.forEach((String email) -> sb.append(' ').append(email));
+        System.out.println(sb.toString());
 
         final BambooServer bambooServer = getBambooServer();
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);

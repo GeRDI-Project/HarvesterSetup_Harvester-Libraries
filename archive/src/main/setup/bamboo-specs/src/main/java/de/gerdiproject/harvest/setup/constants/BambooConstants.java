@@ -47,7 +47,7 @@ public class BambooConstants
     // GIT
     public static final String GIT_CONFIG_PATH = "%s/.git/config";
     public static final String GIT_GET_ROOT_COMMAND = "git rev-parse --show-toplevel";
-    public static final Pattern REPOSITORY_SLUG_PATTERN = Pattern.compile("\\s*url = [\\d\\D]+/(\\w+).git");
+    public static final Pattern REPOSITORY_SLUG_PATTERN = Pattern.compile("\\s*url\\s?=[\\d\\D]+?/([^/]+?).git");
 
     // Maven
     public static final String POM_XML_PATH = "%s/pom.xml";
@@ -60,6 +60,9 @@ public class BambooConstants
     public static final String DEFAULT_JOB = "Default Job";
     public static final String DEPLOY_PLAN_NAME = "Deploy %s-Harvester";
     public static final String ANALYSIS_PLAN_NAME = "Static Analysis: %s-Harvester";
+    public static final String HARVESTER_ABBREVIATION = "HAR";
+    public static final String LOWER_CASE_REGEX = "[a-z]";
+
 
     public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
 
