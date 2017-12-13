@@ -62,20 +62,23 @@ public class HarvesterBambooSpecs
      */
     public static void main(String[] args)
     {
-        final BambooServer bambooServer = getBambooServer();
-
         final ProjectUtils utils = new ProjectUtils();
-        final String repositorySlug = utils.getRepositorySlug();
-        final List<String> devEmails = utils.getDeveloperEmailAddresses();
+
         final String providerClassName = utils.getProviderClassName();
+        System.out.println("ProviderClassName: " + providerClassName);
+        
+        final String repositorySlug = utils.getRepositorySlug();
+        System.out.println("RepositorySlug: " + repositorySlug);
+        
         final BambooKey bambooKey = utils.createBambooKey(providerClassName);
+        System.out.println("BambooKey: " + bambooKey);
+        
+        final List<String> devEmails = utils.getDeveloperEmailAddresses();
+        System.out.print("DeveloperEmails: ");
+        devEmails.forEach((String email) -> System.out.print(email + " "));
+        System.out.println();
 
-        System.out.println("providerClassName: " + providerClassName);
-        System.out.println("repositorySlug: " + repositorySlug);
-        System.out.println("bambooKey: " + bambooKey);
-        System.out.println("emails: ");
-        devEmails.forEach((String email) -> System.out.println(email));
-
+        final BambooServer bambooServer = getBambooServer();
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
         Plan staticAnalysisPlan = createStaticAnalysisPlan(repository, bambooKey, providerClassName);

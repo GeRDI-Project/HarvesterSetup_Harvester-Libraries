@@ -200,6 +200,7 @@ public class ProjectUtils
             String line = gitConfigReader.readLine();
 
             while (line != null) {
+            	System.out.println( line );
                 Matcher lineMatcher = BambooConstants.REPOSITORY_SLUG_PATTERN.matcher(line);
 
                 if (lineMatcher.matches()) {
@@ -209,12 +210,11 @@ public class ProjectUtils
 
                 line = gitConfigReader.readLine();
             }
-
             gitConfigReader.close();
         } catch (IOException e) {
             // nothing to do here
+        	e.printStackTrace();
         }
-
         return repositorySlug;
     }
 
