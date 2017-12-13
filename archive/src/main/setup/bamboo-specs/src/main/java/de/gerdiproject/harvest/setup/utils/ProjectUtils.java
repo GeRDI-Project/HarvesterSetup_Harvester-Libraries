@@ -44,7 +44,9 @@ import de.gerdiproject.harvest.setup.constants.BambooConstants;
 public class ProjectUtils
 {
     private final String projectRootDirectory;
+
     /**
+     * Constructor that retrieves the root directory of the project.
      */
     public ProjectUtils()
     {
@@ -52,6 +54,12 @@ public class ProjectUtils
     }
 
 
+    /**
+     * Looks for the oldest file called *Harvester.java and retrieves the prefix as the
+     * camel case data provider name.
+     *
+     * @return the camel case data provider name
+     */
     public String getProviderClassName()
     {
         String providerClassName = null;
@@ -101,6 +109,11 @@ public class ProjectUtils
     }
 
 
+    /**
+     * Reads the project's pom.xml, extracting the email addresses from the &lt;developer&gt; tags.
+     *
+     * @return a list of email addresses from the developers described in the pom.xml
+     */
     public List<String> getDeveloperEmailAddresses()
     {
         List<String> mailList = new LinkedList<>();
@@ -140,6 +153,11 @@ public class ProjectUtils
     }
 
 
+    /**
+     * Calls a git command in order to retrieve the project root directory,
+     *
+     * @return the top-most directory of the project
+     */
     private String getProjectRootDirectory()
     {
         String projectRootDir = null;
@@ -161,6 +179,11 @@ public class ProjectUtils
     }
 
 
+    /**
+     * Reads the .git/config file and looks for the BitBucket URL, extracting the repository slug.
+     *
+     * @return the repository slug of the project's GIT repository
+     */
     public String getRepositorySlug()
     {
         String repositorySlug = null;
@@ -196,9 +219,15 @@ public class ProjectUtils
     }
 
 
+    /**
+     * Creates a Bamboo key by reading only the upper-case letters of the provider name and appending 'HAR'.
+     *
+     * @param providerClassName the name of the provider in camel case
+     *
+     * @return a Bamboo key for harvester plans
+     */
     public BambooKey createBambooKey(String providerClassName)
     {
         return new BambooKey(providerClassName.replaceAll("[a-z]", "") + "HAR");
     }
-
 }
