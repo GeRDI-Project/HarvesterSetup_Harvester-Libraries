@@ -79,14 +79,14 @@ RenameFileContent  () {
 }
 
 
-# convert arguments to readable names
-providerName=$1
-providerUrl=$2
-authorFullName=$3
-authorEmail=$4
-authorOrganization=$5
-authorOrganizationUrl=$6
-parentHarvesterVersion=$7
+# convert arguments to readable variables, replace all ~ with -, because ~ is used for escaping the sed command
+providerName=$(echo "$1" | tr '~' '-')
+providerUrl=$(echo "$2" | tr '~' '-')
+authorFullName=$(echo "$3" | tr '~' '-')
+authorEmail=$(echo "$4" | tr '~' '-')
+authorOrganization=$(echo "$5" | tr '~' '-')
+authorOrganizationUrl=$(echo "$6" | tr '~' '-')
+parentHarvesterVersion=$(echo "$7" | tr '~' '-')
 
 # create class and package names by removing illegal chars and forcing camel-case
 illegalChars="  _-\\/{}()"
