@@ -18,8 +18,9 @@
  */
 
 /**
- * This package contains classes and packages that are related to ${providerName} JSON responses.
+ * This package contains static classes of constants concerning
+ * the BambooSpecs and the usage thereof.
  *
- * @author ${authorFullName}
+ * @author Robin Weiss
  */
-package de.gerdiproject.harvest.${providerPackageName}.json;
+package de.gerdiproject.harvest.setup.constants;

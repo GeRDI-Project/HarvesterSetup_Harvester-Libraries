@@ -19,7 +19,7 @@
 
 /**
  * This package contains static classes of constants concerning
- * the ${providerClassName} source data.
+ * the ${providerName} source data.
  *
  * @author ${authorFullName}
  */

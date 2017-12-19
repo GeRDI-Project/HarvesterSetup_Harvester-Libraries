@@ -11,8 +11,8 @@
 	
 	<artifactId>${providerClassName}-HarvesterService</artifactId>
     <packaging>war</packaging>
-	<name>${providerClassName} Harvester Service</name>
-	<description>This is a restful harvester for retrieving data from: ${providerUrl}</description>
+	<name>${providerName} Harvester Service</name>
+	<description>This is a restful harvester for retrieving data from ${providerUrl}</description>
   
 	<developers>
 		<developer>

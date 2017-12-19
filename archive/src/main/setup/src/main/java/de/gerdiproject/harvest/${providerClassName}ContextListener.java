@@ -23,7 +23,7 @@ import de.gerdiproject.harvest.harvester.${providerClassName}Harvester;
 import javax.servlet.annotation.WebListener;
 
 /**
- * This class initializes the FAOSTAT harvester and all objects that are required.
+ * This class initializes the {@linkplain ${providerClassName}Harvester} and all required classes.
  *
  * @author Robin Weiss
  */

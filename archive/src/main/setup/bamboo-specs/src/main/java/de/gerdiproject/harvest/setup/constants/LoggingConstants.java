@@ -16,10 +16,28 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+package de.gerdiproject.harvest.setup.constants;
+
+
 
 /**
- * This package contains classes and packages that are related to ${providerName} JSON responses.
+ * A static collection of constants for logging purposes.
  *
- * @author ${authorFullName}
+ * @author Robin Weiss
  */
-package de.gerdiproject.harvest.${providerPackageName}.json;
+public class LoggingConstants
+{
+    public static final String PROVIDER_CLASS_NAME = "ProviderClassName: ";
+    public static final String REPOSITORY_SLUG = "RepositorySlug: ";
+    public static final String BAMBOO_KEY = "BambooKey: ";
+    public static final String DEVELOPER_EMAILS = "DeveloperEmails:";
+    public static final String CONNECTING_TO_SERVER = "Connecting to Bamboo Server: %s";
+
+    /**
+     * Private Constructor, because this is a static class.
+     */
+    private LoggingConstants()
+    {
+
+    }
+}

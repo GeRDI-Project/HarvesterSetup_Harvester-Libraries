@@ -16,10 +16,24 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+package de.gerdiproject.harvest.setup.utils;
+
+import java.io.File;
+import java.io.FilenameFilter;
+
+import de.gerdiproject.harvest.setup.constants.BambooConstants;
+
 
 /**
- * This package contains classes and packages that are related to ${providerName} JSON responses.
+ * A file name filter that checks if the file names end with "Harvester.java".
  *
- * @author ${authorFullName}
+ * @author Robin Weiss
  */
-package de.gerdiproject.harvest.${providerPackageName}.json;
+public class HarvesterFilenameFilter implements FilenameFilter
+{
+    @Override
+    public boolean accept(File file, String fileName)
+    {
+        return BambooConstants.HARVESTER_FILE_PATTERN.matcher(fileName).matches();
+    }
+}

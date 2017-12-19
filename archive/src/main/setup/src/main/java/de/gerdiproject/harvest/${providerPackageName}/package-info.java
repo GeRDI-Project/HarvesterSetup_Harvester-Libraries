@@ -18,7 +18,7 @@
  */
 
 /**
- * This package contains classes and packages that are related to ${providerClassName} source data.
+ * This package contains classes and packages that are related to ${providerName} source data.
  *
  * @author ${authorFullName}
  */
