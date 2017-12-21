@@ -121,7 +121,7 @@ public class BambooConstants
         "# for some reason, the Maven 3.x Bamboo Task interprets multiple arguments as one, so we need to use a script instead\n"
         + "mvn clean verify -PdockerPush -Dexec.args=\"<maven> <gerdi>\"");
 
-    
+
     // Bamboo Branch Management
     public static final PlanBranchManagement MANUAL_BRANCH_MANAGEMENT  = new PlanBranchManagement()
     .delete(new BranchCleanup())

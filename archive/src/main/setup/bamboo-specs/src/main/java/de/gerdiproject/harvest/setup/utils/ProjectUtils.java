@@ -30,10 +30,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
 
 import de.gerdiproject.harvest.setup.HarvesterBambooSpecs;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
+import de.gerdiproject.harvest.setup.constants.LoggingConstants;
 
 
 /**
@@ -43,6 +47,8 @@ import de.gerdiproject.harvest.setup.constants.BambooConstants;
  */
 public class ProjectUtils
 {
+    private static Logger LOGGER = LoggerFactory.getLogger(ProjectUtils.class);
+
     private final String projectRootDirectory;
 
     /**
@@ -51,6 +57,7 @@ public class ProjectUtils
     public ProjectUtils()
     {
         projectRootDirectory = getProjectRootDirectory();
+        LOGGER.info(LoggingConstants.PROJECT_ROOT_DIR + projectRootDirectory);
     }
 
 
@@ -173,6 +180,12 @@ public class ProjectUtils
 
         } catch (IOException e) {
             // nothing to do here
+        }
+
+        // fallback: get the folder above the bamboo-specs directory
+        if (projectRootDir == null) {
+            projectRootDir = System.getProperty("user.dir");
+            projectRootDir = projectRootDir.substring(0, projectRootDir.lastIndexOf('\\'));
         }
 
         return projectRootDir;
