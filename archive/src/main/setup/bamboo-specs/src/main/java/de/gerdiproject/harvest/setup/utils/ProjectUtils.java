@@ -185,7 +185,13 @@ public class ProjectUtils
         // fallback: get the folder above the bamboo-specs directory
         if (projectRootDir == null) {
             projectRootDir = System.getProperty("user.dir");
-            projectRootDir = projectRootDir.substring(0, projectRootDir.lastIndexOf('\\'));
+            int lastSlash = projectRootDir.lastIndexOf('\\');
+
+            if (lastSlash == -1)
+                lastSlash = projectRootDir.lastIndexOf('/');
+
+            if (lastSlash != -1)
+                projectRootDir = projectRootDir.substring(0, lastSlash);
         }
 
         return projectRootDir;
