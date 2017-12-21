@@ -66,18 +66,18 @@ public class BambooConstants
     public static final String DEVELOPERS_CLOSING_TAG = "</developers>";
 
     // Bamboo Names
+    public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
     public static final String DEFAULT_STAGE = "Default Stage";
     public static final String DEFAULT_JOB = "Default Job";
-    public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
     public static final String HARVESTER_ABBREVIATION = "HAR";
     public static final String LOWER_CASE_REGEX = "[a-z]";
 
     public static final String PASSWORD_VARIABLE_KEY = "passwordGit";
 
-    public static final String ANALYSIS_PLAN_NAME = "Static Analysis: %s-Harvester";
+    public static final String ANALYSIS_PLAN_NAME = "%s-Harvester Static Analysis";
     public static final String ANALYSIS_PLAN_DESCRIPTION = "Static Analysis of the ${providerName} Harvester.";
 
-    public static final String DEPLOYMENT_PLAN_NAME = "Deploy %s-Harvester";
+    public static final String DEPLOYMENT_PLAN_NAME = "%s-Harvester Deployment";
     public static final String DEPLOYMENT_PLAN_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
 
     // GeRDI Bamboo Projects
@@ -107,15 +107,13 @@ public class BambooConstants
     .description("Checkout Default Repository")
     .checkoutItems(new CheckoutItem().defaultRepository());
 
-
-    public static final Task<?, ?> MAVEN_INSTALL_TASK = new MavenTask()
-    .description("Maven: Clean, Install")
-    .goal("clean install")
+    public static final Task<?, ?> MAVEN_INSTALL_STRICT_TASK = new MavenTask()
+    .description("Maven: Code Style Check")
+    .goal("clean install -Pstrict")
     .jdk("JDK 1.8")
     .executableLabel("Maven 3")
     .hasTests(true)
     .useMavenReturnCode(true);
-
 
     public static final Task<?, ?> MAVEN_DOCKER_PUSH_TASK = new ScriptTask()
     .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
@@ -123,39 +121,7 @@ public class BambooConstants
         "# for some reason, the Maven 3.x Bamboo Task interprets multiple arguments as one, so we need to use a script instead\n"
         + "mvn clean verify -PdockerPush -Dexec.args=\"<maven> <gerdi>\"");
 
-
-    public static final Task<?, ?> ASTYLE_CHECK_TASK = new ScriptTask()
-    .description("AStyle Formatting-Check")
-    .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
-    .inlineBody(
-        "echo \"\\\\nChecking code formatting:\"\n\n"
-        + "formattingStyle=\"kr\"\n"
-        + "sourcePath=\"src\\\\\"\n"
-        + "astyleLibPath=\"\\\\usr\\lib\\astyle\\file\\\\\"\n\n"
-        + "# run AStyle without changing the files\n"
-        + "result=$(astyle --options=\"$astyleLibPath$formattingStyle.ini\" --dry-run --recursive --formatted $sourcePath*)\n\n"
-        + "# remove all text up until the name of the first unformatted file\n"
-        + "newResult=${result#*Formatted  }\n\n"
-        + "errorCount=0\n\n"
-        + "while [ \"$newResult\" != \"$result\" ]\ndo\n"
-        + "  errorCount=$(($errorCount + 1))\n"
-        + "  result=\"$newResult\"\n\n"
-        + "  # retrieve the name of the unformatted file\n"
-        + "  fileName=$(echo $result | sed -e \"s/Formatted .*//gi\")\n\n"
-        + "  # log the unformatted file\n"
-        + "  echo \"Unformatted File: $fileName\"\n\n"
-        + "  # remove all text up until the name of the next unformatted file\n"
-        + "  newResult=${result#*Formatted  }\n"
-        + "done\n\n"
-        + "if [ $errorCount -ne 0 ]; then\n"
-        + "  echo \"\\\\nFound $errorCount unformatted files! Please use the AristicStyle formatter before committing your code!\\\\n(see https://wiki.gerdi-project.de/display/GeRDI/%5BWIP%5D+How+to+Format+Code)\"\n"
-        + "  exit 1\n"
-        + "else\n"
-        + "  echo \"All files are properly formatted!\"\n"
-        + "  exit 0\n"
-        + "fi");
-
-
+    
     // Bamboo Branch Management
     public static final PlanBranchManagement MANUAL_BRANCH_MANAGEMENT  = new PlanBranchManagement()
     .delete(new BranchCleanup())

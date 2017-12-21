@@ -146,7 +146,7 @@ public class HarvesterBambooSpecs
             BambooConstants.DEPLOYMENT_PROJECT,
             String.format(BambooConstants.DEPLOYMENT_PLAN_NAME, providerClassName),
             bambooKey);
-        deploymentPlan.description(BambooConstants.ANALYSIS_PLAN_DESCRIPTION);
+        deploymentPlan.description(BambooConstants.DEPLOYMENT_PLAN_DESCRIPTION);
         deploymentPlan.pluginConfigurations(new ConcurrentBuilds().useSystemWideDefault(false));
         deploymentPlan.planRepositories(repository);
         deploymentPlan.variables(new Variable(BambooConstants.PASSWORD_VARIABLE_KEY, ""));
@@ -182,7 +182,7 @@ public class HarvesterBambooSpecs
             BambooConstants.ANALYSIS_PROJECT,
             String.format(BambooConstants.ANALYSIS_PLAN_NAME, providerClassName),
             bambooKey);
-        analysisPlan.description(BambooConstants.DEPLOYMENT_PLAN_DESCRIPTION);
+        analysisPlan.description(BambooConstants.ANALYSIS_PLAN_DESCRIPTION);
         analysisPlan.pluginConfigurations(new ConcurrentBuilds().useSystemWideDefault(false));
         analysisPlan.planRepositories(repository);
         analysisPlan.triggers(new BitbucketServerTrigger());
@@ -194,8 +194,7 @@ public class HarvesterBambooSpecs
 
         defaultJob.tasks(
             BambooConstants.REPOSITORY_CHECKOUT_TASK,
-            BambooConstants.MAVEN_INSTALL_TASK,
-            BambooConstants.ASTYLE_CHECK_TASK);
+            BambooConstants.MAVEN_INSTALL_STRICT_TASK);
 
         // add job to plan
         analysisPlan.stages(new Stage(BambooConstants.DEFAULT_STAGE).jobs(defaultJob));
