@@ -69,11 +69,6 @@ public class BambooConstants
     .key(new BambooKey("CA"))
     .name("Code Analysis");
 
-    public static final Project DEPLOYMENT_PROJECT = new Project()
-    .oid(new BambooOid("tfn4xj9wxczl"))
-    .key(new BambooKey("DEP"))
-    .name("Deployment");
-
 
     // Tasks
     public static final Task<?, ?> DOCKER_PUSH_TASK = new ScriptTask()

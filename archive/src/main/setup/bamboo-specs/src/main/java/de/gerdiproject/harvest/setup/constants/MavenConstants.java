@@ -20,13 +20,8 @@ package de.gerdiproject.harvest.setup.constants;
 
 import java.util.regex.Pattern;
 
-import com.atlassian.bamboo.specs.api.builders.BambooKey;
-import com.atlassian.bamboo.specs.api.builders.BambooOid;
-import com.atlassian.bamboo.specs.api.builders.project.Project;
 import com.atlassian.bamboo.specs.api.builders.task.Task;
 import com.atlassian.bamboo.specs.builders.task.MavenTask;
-import com.atlassian.bamboo.specs.builders.task.ScriptTask;
-import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 
 
 
