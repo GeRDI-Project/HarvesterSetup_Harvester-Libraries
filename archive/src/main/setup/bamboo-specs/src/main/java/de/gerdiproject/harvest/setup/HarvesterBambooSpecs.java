@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import com.atlassian.bamboo.specs.api.BambooSpec;
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
-import com.atlassian.bamboo.specs.api.builders.Variable;
 import com.atlassian.bamboo.specs.api.builders.applink.ApplicationLink;
 import com.atlassian.bamboo.specs.api.builders.deployment.Deployment;
 import com.atlassian.bamboo.specs.api.builders.deployment.Environment;
@@ -49,8 +48,11 @@ import com.atlassian.bamboo.specs.builders.task.CleanWorkingDirectoryTask;
 import com.atlassian.bamboo.specs.builders.trigger.BitbucketServerTrigger;
 import com.atlassian.bamboo.specs.util.BambooServer;
 
+import de.gerdiproject.harvest.setup.constants.ArtifactConstants;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
+import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
 import de.gerdiproject.harvest.setup.constants.LoggingConstants;
+import de.gerdiproject.harvest.setup.constants.MavenConstants;
 import de.gerdiproject.harvest.setup.utils.ProjectUtils;
 
 /**
@@ -122,54 +124,19 @@ public class HarvesterBambooSpecs
     private static BitbucketServerRepository createRepository(String providerClassName, String repositorySlug)
     {
         return new BitbucketServerRepository()
-               .name(String.format(BambooConstants.BITBUCKET_HARVESTER_NAME, providerClassName))
+               .name(String.format(RepositoryConstants.BITBUCKET_HARVESTER_NAME, providerClassName))
                .repositoryViewer(new BitbucketServerRepositoryViewer())
                .server(new ApplicationLink()
-                       .name(BambooConstants.BITBUCKET)
-                       .id(BambooConstants.BITBUCKET_ID))
-               .projectKey(BambooConstants.BITBUCKET_HARVESTER_PROJECT)
+                       .name(RepositoryConstants.BITBUCKET)
+                       .id(RepositoryConstants.BITBUCKET_ID))
+               .projectKey(RepositoryConstants.BITBUCKET_HARVESTER_PROJECT)
                .repositorySlug(repositorySlug)
-               .branch(BambooConstants.GIT_MASTER_BRANCH)
+               .branch(RepositoryConstants.GIT_MASTER_BRANCH)
                .shallowClonesEnabled(true)
                .remoteAgentCacheEnabled(false)
                .changeDetection(new VcsChangeDetection());
     }
 
-
-    /**
-     * Creates a harvester deployment plan.
-     *
-     * @param repository the repository that is linked to the plan
-     * @param bambooKey the bamboo key of the plan
-     * @param providerClassName the name of the provider in camel case
-     *
-     * @return a harvester deployment plan
-     */
-    private static Plan createDeploymentPlan(BitbucketServerRepository repository, BambooKey bambooKey, String providerClassName)
-    {
-        // set up plan
-        final Plan deploymentPlan = new Plan(
-            BambooConstants.DEPLOYMENT_PROJECT,
-            String.format(BambooConstants.DEPLOYMENT_PLAN_NAME, providerClassName),
-            bambooKey);
-        deploymentPlan.description(BambooConstants.DEPLOYMENT_PLAN_DESCRIPTION);
-        deploymentPlan.pluginConfigurations(new ConcurrentBuilds().useSystemWideDefault(false));
-        deploymentPlan.planRepositories(repository);
-        deploymentPlan.variables(new Variable(BambooConstants.PASSWORD_VARIABLE_KEY, ""));
-        deploymentPlan.planBranchManagement(BambooConstants.MANUAL_BRANCH_MANAGEMENT);
-
-        // set up job
-        final Job defaultJob = new Job(
-            BambooConstants.DEFAULT_JOB,
-            BambooConstants.DEFAULT_JOB_KEY);
-        defaultJob.artifacts(BambooConstants.WAR_FILE_ARTIFACT);
-        defaultJob.tasks(BambooConstants.REPOSITORY_CHECKOUT_TASK,
-                         BambooConstants.MAVEN_DOCKER_PUSH_TASK);
-
-        // add job to plan
-        deploymentPlan.stages(new Stage(BambooConstants.DEFAULT_STAGE).jobs(defaultJob));
-        return deploymentPlan;
-    }
 
     /**
      * Creates a harvester deployment project.
@@ -182,15 +149,17 @@ public class HarvesterBambooSpecs
      */
     private static Deployment createDeploymentProject(BitbucketServerRepository repository, PlanIdentifier sourcePlanIdentifier, String providerClassName)
     {
-        Deployment dep = new Deployment(sourcePlanIdentifier, String.format(BambooConstants.DEPLOYMENT_PLAN_NAME, providerClassName));
-        dep.description(BambooConstants.DEPLOYMENT_PLAN_DESCRIPTION);
-        dep.releaseNaming(new ReleaseNaming(BambooConstants.DEPLOYMENT_RELEASE_NAMING).autoIncrement(false));
+        Deployment dep = new Deployment(sourcePlanIdentifier, String.format(BambooConstants.DEPLOYMENT_PROJECT_NAME, providerClassName));
+        dep.description(BambooConstants.DEPLOYMENT_PROJECT_DESCRIPTION);
+        dep.releaseNaming(new ReleaseNaming(BambooConstants.DEPLOYMENT_PROJECT_RELEASE_NAMING).autoIncrement(false));
+
+        // create checkout task
 
         // add production environment
         Environment productionEnvironment = new Environment(BambooConstants.PRODUCTION_DEPLOYMENT_ENV)
         .tasks(new CleanWorkingDirectoryTask(),
-               BambooConstants.REPOSITORY_CHECKOUT_TASK,
-               BambooConstants.MAVEN_DOCKER_PUSH_TASK);
+               ArtifactConstants.DOWNLOAD_TASK,
+               BambooConstants.DOCKER_PUSH_TASK);
         dep.environments(productionEnvironment);
 
         return dep;
@@ -224,11 +193,18 @@ public class HarvesterBambooSpecs
             BambooConstants.DEFAULT_JOB_KEY);
 
         defaultJob.tasks(
-            BambooConstants.REPOSITORY_CHECKOUT_TASK,
-            BambooConstants.MAVEN_INSTALL_STRICT_TASK);
+            RepositoryConstants.CHECKOUT_TASK,
+            MavenConstants.MAVEN_INSTALL_STRICT_TASK);
+
+        defaultJob.artifacts(
+            ArtifactConstants.WAR_ARTIFACT,
+            ArtifactConstants.DOCKERFILE_ARTIFACT,
+            ArtifactConstants.DOCKER_PUSH_ARTIFACT,
+            ArtifactConstants.DOCKER_IMAGE_NAME_ARTIFACT
+        );
 
         // add job to plan
-        analysisPlan.stages(new Stage(BambooConstants.DEFAULT_STAGE).jobs(defaultJob));
+        analysisPlan.stages(new Stage(BambooConstants.DEFAULT_JOB_STAGE).jobs(defaultJob));
 
         // auto-create plan branches, delete them after 1 day when the branch is removed in the repository
         analysisPlan.planBranchManagement(new PlanBranchManagement()
