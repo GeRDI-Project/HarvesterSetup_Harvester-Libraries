@@ -184,7 +184,7 @@ public class HarvesterBambooSpecs
     {
         Deployment dep = new Deployment(sourcePlanIdentifier, String.format(BambooConstants.DEPLOYMENT_PLAN_NAME, providerClassName));
         dep.description(BambooConstants.DEPLOYMENT_PLAN_DESCRIPTION);
-        dep.releaseNaming(new ReleaseNaming(BambooConstants.DEPLOYMENT_RELEASE_NAMING).autoIncrement(true));
+        dep.releaseNaming(new ReleaseNaming(BambooConstants.DEPLOYMENT_RELEASE_NAMING).autoIncrement(false));
 
         // add production environment
         Environment productionEnvironment = new Environment(BambooConstants.PRODUCTION_DEPLOYMENT_ENV)
