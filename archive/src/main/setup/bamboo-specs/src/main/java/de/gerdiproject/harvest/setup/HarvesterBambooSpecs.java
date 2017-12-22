@@ -27,6 +27,11 @@ import com.atlassian.bamboo.specs.api.BambooSpec;
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
 import com.atlassian.bamboo.specs.api.builders.Variable;
 import com.atlassian.bamboo.specs.api.builders.applink.ApplicationLink;
+import com.atlassian.bamboo.specs.api.builders.deployment.Deployment;
+import com.atlassian.bamboo.specs.api.builders.deployment.Environment;
+import com.atlassian.bamboo.specs.api.builders.deployment.ReleaseNaming;
+import com.atlassian.bamboo.specs.api.builders.permission.DeploymentPermissions;
+import com.atlassian.bamboo.specs.api.builders.permission.EnvironmentPermissions;
 import com.atlassian.bamboo.specs.api.builders.permission.PermissionType;
 import com.atlassian.bamboo.specs.api.builders.permission.Permissions;
 import com.atlassian.bamboo.specs.api.builders.permission.PlanPermissions;
@@ -40,6 +45,7 @@ import com.atlassian.bamboo.specs.api.builders.plan.configuration.ConcurrentBuil
 import com.atlassian.bamboo.specs.api.builders.repository.VcsChangeDetection;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepositoryViewer;
+import com.atlassian.bamboo.specs.builders.task.CleanWorkingDirectoryTask;
 import com.atlassian.bamboo.specs.builders.trigger.BitbucketServerTrigger;
 import com.atlassian.bamboo.specs.util.BambooServer;
 
@@ -86,10 +92,10 @@ public class HarvesterBambooSpecs
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
         Plan staticAnalysisPlan = createStaticAnalysisPlan(repository, bambooKey, providerClassName);
-        publishPlan(bambooServer, staticAnalysisPlan, devEmails);
+        publish(bambooServer, staticAnalysisPlan, devEmails);
 
-        Plan deploymentPlan = createDeploymentPlan(repository, bambooKey, providerClassName);
-        publishPlan(bambooServer, deploymentPlan, devEmails);
+        Deployment deploymentProject = createDeploymentProject(repository, staticAnalysisPlan.getIdentifier(), providerClassName);
+        publish(bambooServer, deploymentProject, devEmails);
     }
 
 
@@ -165,6 +171,31 @@ public class HarvesterBambooSpecs
         return deploymentPlan;
     }
 
+    /**
+     * Creates a harvester deployment project.
+     *
+     * @param repository the repository that is linked to the plan
+     * @param bambooKey the bamboo key of the plan
+     * @param providerClassName the name of the provider in camel case
+     *
+     * @return a harvester deployment plan
+     */
+    private static Deployment createDeploymentProject(BitbucketServerRepository repository, PlanIdentifier sourcePlanIdentifier, String providerClassName)
+    {
+        Deployment dep = new Deployment(sourcePlanIdentifier, String.format(BambooConstants.DEPLOYMENT_PLAN_NAME, providerClassName));
+        dep.description(BambooConstants.DEPLOYMENT_PLAN_DESCRIPTION);
+        dep.releaseNaming(new ReleaseNaming(BambooConstants.DEPLOYMENT_RELEASE_NAMING).autoIncrement(true));
+
+        // add production environment
+        Environment productionEnvironment = new Environment(BambooConstants.PRODUCTION_DEPLOYMENT_ENV)
+        .tasks(new CleanWorkingDirectoryTask(),
+               BambooConstants.REPOSITORY_CHECKOUT_TASK,
+               BambooConstants.MAVEN_DOCKER_PUSH_TASK);
+        dep.environments(productionEnvironment);
+
+        return dep;
+    }
+
 
     /**
      * Creates a code analysis plan for the harvester service.
@@ -215,7 +246,7 @@ public class HarvesterBambooSpecs
      * @param plan the plan that is to be published
      * @param developerEmailAddresses email addresses of developers that will get access rights to the plan
      */
-    private static void publishPlan(BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
+    private static void publish(BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
     {
         PlanIdentifier planId = plan.getIdentifier();
         bambooServer.publish(plan);
@@ -232,6 +263,35 @@ public class HarvesterBambooSpecs
                                        .loggedInUserPermissions(PermissionType.VIEW)
                                        .anonymousUserPermissionView());
             bambooServer.publish(planPermission);
+        }
+    }
+
+    /**
+     * Publishes a deployment project on a specified Bamboo server.
+     *
+     * @param bambooServer the server on which the plan is published
+     * @param deployment the deployment project that is to be published
+     * @param developerEmailAddresses email addresses of developers that will get view rights to the plan
+     */
+    private static void publish(BambooServer bambooServer, Deployment deployment, List<String> developerEmailAddresses)
+    {
+        String depName = deployment.getName();
+        bambooServer.publish(deployment);
+
+        for (String devEmail : developerEmailAddresses) {
+            DeploymentPermissions depPermission = new DeploymentPermissions(depName);
+            depPermission.permissions(new Permissions()
+                                      .userPermissions(devEmail, PermissionType.VIEW)
+                                      .loggedInUserPermissions(PermissionType.VIEW)
+                                      .anonymousUserPermissionView());
+            bambooServer.publish(depPermission);
+
+            EnvironmentPermissions envPermission = new EnvironmentPermissions(depName);
+            envPermission.environmentName(BambooConstants.PRODUCTION_DEPLOYMENT_ENV);
+            envPermission.permissions(new Permissions()
+                                      .userPermissions(devEmail, PermissionType.VIEW)
+                                      .loggedInUserPermissions(PermissionType.VIEW)
+                                      .anonymousUserPermissionView());
         }
     }
 }

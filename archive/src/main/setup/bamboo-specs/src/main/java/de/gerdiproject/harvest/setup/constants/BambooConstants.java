@@ -47,6 +47,7 @@ public class BambooConstants
     public static final String MAIN_HARVESTER_PATH = "%s/src/main/java/de/gerdiproject/harvest/harvester/";
     public static final Pattern HARVESTER_FILE_PATTERN = Pattern.compile("(\\w+)Harvester.java");
 
+
     // GIT
     public static final String GIT_CONFIG_PATH = "%s/.git/config";
     public static final String GIT_GET_ROOT_COMMAND = "git rev-parse --show-toplevel";
@@ -65,6 +66,7 @@ public class BambooConstants
     public static final String DEVELOPERS_OPENING_TAG = "<developers>";
     public static final String DEVELOPERS_CLOSING_TAG = "</developers>";
 
+
     // Bamboo Names
     public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
     public static final String DEFAULT_STAGE = "Default Stage";
@@ -77,8 +79,10 @@ public class BambooConstants
     public static final String ANALYSIS_PLAN_NAME = "%s-Harvester Static Analysis";
     public static final String ANALYSIS_PLAN_DESCRIPTION = "Static Analysis of the ${providerName} Harvester.";
 
-    public static final String DEPLOYMENT_PLAN_NAME = "%s-Harvester Deployment";
+    public static final String DEPLOYMENT_PLAN_NAME = "%s-Harvester";
     public static final String DEPLOYMENT_PLAN_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
+    public static final String PRODUCTION_DEPLOYMENT_ENV = "Production";
+    public static final String DEPLOYMENT_RELEASE_NAMING = "release-${bamboo.RELEASE_VERSION}";
 
     // GeRDI Bamboo Projects
     public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
