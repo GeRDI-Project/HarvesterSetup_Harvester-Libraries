@@ -44,14 +44,12 @@ public class ArtifactConstants
 
     // Names
     private static final String WAR_ARTIFACT_NAME = "warFile";
-    private static final String DOCKER_PUSH_ARTIFACT_NAME = "dockerPushScript";
-    private static final String DOCKER_IMAGE_NAME_ARTIFACT_NAME = "dockerImageNameScript";
+    private static final String SCRIPTS_ARTIFACT_NAME = "scripts";
     private static final String DOCKERFILE_ARTIFACT_NAME = "dockerfile";
 
     // Copy Patterns
     private static final String WAR_PATTERN = "*.war";
-    private static final String DOCKER_PUSH_PATTERN = "docker-push.sh";
-    private static final String DOCKER_IMAGE_NAME_PATTERN = "docker-getImageName.sh";
+    private static final String SCRIPTS_PATTERN = "**/*";
     private static final String DOCKERFILE_PATTERN = "Dockerfile";
 
 
@@ -66,15 +64,9 @@ public class ArtifactConstants
     .location(TARGET_DIR)
     .shared(true);
 
-    public static final Artifact DOCKER_PUSH_ARTIFACT = new Artifact()
-    .name(DOCKER_PUSH_ARTIFACT_NAME)
-    .copyPattern(DOCKER_PUSH_PATTERN)
-    .location(SCRIPTS_DIR)
-    .shared(true);
-
-    public static final Artifact DOCKER_IMAGE_NAME_ARTIFACT = new Artifact()
-    .name(DOCKER_IMAGE_NAME_ARTIFACT_NAME)
-    .copyPattern(DOCKER_IMAGE_NAME_PATTERN)
+    public static final Artifact SCRIPT_ARTIFACTS = new Artifact()
+    .name(SCRIPTS_ARTIFACT_NAME)
+    .copyPattern(SCRIPTS_PATTERN)
     .location(SCRIPTS_DIR)
     .shared(true);
 
@@ -91,10 +83,7 @@ public class ArtifactConstants
                .artifact(WAR_ARTIFACT_NAME)
                .path(TARGET_DIR),
                new DownloadItem()
-               .artifact(DOCKER_PUSH_ARTIFACT_NAME)
-               .path(SCRIPTS_DIR),
-               new DownloadItem()
-               .artifact(DOCKER_IMAGE_NAME_ARTIFACT_NAME)
+               .artifact(SCRIPTS_ARTIFACT_NAME)
                .path(SCRIPTS_DIR),
                new DownloadItem()
                .artifact(DOCKERFILE_ARTIFACT_NAME));

@@ -199,8 +199,7 @@ public class HarvesterBambooSpecs
         defaultJob.artifacts(
             ArtifactConstants.WAR_ARTIFACT,
             ArtifactConstants.DOCKERFILE_ARTIFACT,
-            ArtifactConstants.DOCKER_PUSH_ARTIFACT,
-            ArtifactConstants.DOCKER_IMAGE_NAME_ARTIFACT
+            ArtifactConstants.SCRIPT_ARTIFACTS
         );
 
         // add job to plan
