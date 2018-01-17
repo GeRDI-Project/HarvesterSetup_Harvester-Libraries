@@ -60,7 +60,7 @@ public class BambooConstants
     public static final String DEPLOYMENT_PROJECT_NAME = "%s-Harvester";
     public static final String DEPLOYMENT_PROJECT_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
     public static final String PRODUCTION_DEPLOYMENT_ENV = "Production";
-    public static final String DEPLOYMENT_PROJECT_RELEASE_NAMING = "release-${bamboo.RELEASE_VERSION}";
+    public static final String DEPLOYMENT_PROJECT_RELEASE_NAMING = "${bamboo.RELEASE_VERSION}";
 
 
     // Projects
