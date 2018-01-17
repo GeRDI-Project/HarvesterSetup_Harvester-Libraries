@@ -11,14 +11,13 @@
 	
 	<groupId>de.gerdi-project</groupId>
 	<artifactId>GeRDI-harvester-setup</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	
 	<packaging>pom</packaging>
 	<name>Harvester Project Setup</name>
 	<description>This project sets up a harvester project when compiled.</description>
 	
 	<properties>
-		<harvestersetuparchive.dependency.version>1.0.0-SNAPSHOT</harvestersetuparchive.dependency.version>
 		<dependency.plugin.version>3.0.2</dependency.plugin.version>
 	</properties>
 	
@@ -57,7 +56,7 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>GeRDI-harvester-setup-archive</artifactId>
-					<version>${harvestersetuparchive.dependency.version}</version>
+					<version>${project.version}</version>
 					<classifier>resources</classifier>
 					<type>zip</type>
 					<!-- Make sure this isn't included on any classpath-->

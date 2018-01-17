@@ -30,10 +30,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
 
 import de.gerdiproject.harvest.setup.HarvesterBambooSpecs;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
+import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
+import de.gerdiproject.harvest.setup.constants.LoggingConstants;
+import de.gerdiproject.harvest.setup.constants.MavenConstants;
 
 
 /**
@@ -43,6 +49,8 @@ import de.gerdiproject.harvest.setup.constants.BambooConstants;
  */
 public class ProjectUtils
 {
+    private static Logger LOGGER = LoggerFactory.getLogger(ProjectUtils.class);
+
     private final String projectRootDirectory;
 
     /**
@@ -51,6 +59,7 @@ public class ProjectUtils
     public ProjectUtils()
     {
         projectRootDirectory = getProjectRootDirectory();
+        LOGGER.info(LoggingConstants.PROJECT_ROOT_DIR + projectRootDirectory);
     }
 
 
@@ -120,7 +129,7 @@ public class ProjectUtils
 
         try {
             // open pom.xml
-            String pomPath = String.format(BambooConstants.POM_XML_PATH, projectRootDirectory);
+            String pomPath = String.format(MavenConstants.POM_XML_PATH, projectRootDirectory);
             BufferedReader pomReader = new BufferedReader(
                 new InputStreamReader(
                     new FileInputStream(pomPath),
@@ -130,12 +139,12 @@ public class ProjectUtils
             String line = pomReader.readLine();
 
             // skip everything before the <developers> tag
-            while (line != null && !line.contains(BambooConstants.DEVELOPERS_OPENING_TAG))
+            while (line != null && !line.contains(MavenConstants.DEVELOPERS_OPENING_TAG))
                 line = pomReader.readLine();
 
             // look for <email> tags, abort when the </developers> end-tag is found
-            while (line != null && !line.contains(BambooConstants.DEVELOPERS_CLOSING_TAG)) {
-                Matcher emailMatcher = BambooConstants.EMAIL_TAG_PATTERN.matcher(line);
+            while (line != null && !line.contains(MavenConstants.DEVELOPERS_CLOSING_TAG)) {
+                Matcher emailMatcher = MavenConstants.EMAIL_TAG_PATTERN.matcher(line);
 
                 if (emailMatcher.matches())
                     mailList.add(emailMatcher.group(1));
@@ -163,7 +172,7 @@ public class ProjectUtils
         String projectRootDir = null;
 
         try {
-            Process pr = Runtime.getRuntime().exec(BambooConstants.GIT_GET_ROOT_COMMAND);
+            Process pr = Runtime.getRuntime().exec(RepositoryConstants.GIT_GET_ROOT_COMMAND);
 
             BufferedReader gitRootCommandReader = new BufferedReader(
                 new InputStreamReader(
@@ -173,6 +182,18 @@ public class ProjectUtils
 
         } catch (IOException e) {
             // nothing to do here
+        }
+
+        // fallback: get the folder above the bamboo-specs directory
+        if (projectRootDir == null) {
+            projectRootDir = System.getProperty("user.dir");
+            int lastSlash = projectRootDir.lastIndexOf('\\');
+
+            if (lastSlash == -1)
+                lastSlash = projectRootDir.lastIndexOf('/');
+
+            if (lastSlash != -1)
+                projectRootDir = projectRootDir.substring(0, lastSlash);
         }
 
         return projectRootDir;
@@ -190,7 +211,7 @@ public class ProjectUtils
 
         try {
             // open config file
-            String gitConfigPath = String.format(BambooConstants.GIT_CONFIG_PATH, projectRootDirectory);
+            String gitConfigPath = String.format(RepositoryConstants.GIT_CONFIG_PATH, projectRootDirectory);
             BufferedReader gitConfigReader = new BufferedReader(
                 new InputStreamReader(
                     new FileInputStream(gitConfigPath),
@@ -200,7 +221,7 @@ public class ProjectUtils
             String line = gitConfigReader.readLine();
 
             while (line != null) {
-                Matcher lineMatcher = BambooConstants.REPOSITORY_SLUG_PATTERN.matcher(line);
+                Matcher lineMatcher = RepositoryConstants.REPOSITORY_SLUG_PATTERN.matcher(line);
 
                 if (lineMatcher.matches()) {
                     repositorySlug = lineMatcher.group(1);

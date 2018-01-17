@@ -22,22 +22,17 @@ import java.util.regex.Pattern;
 
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
 import com.atlassian.bamboo.specs.api.builders.BambooOid;
-import com.atlassian.bamboo.specs.api.builders.plan.artifact.Artifact;
-import com.atlassian.bamboo.specs.api.builders.plan.branches.BranchCleanup;
-import com.atlassian.bamboo.specs.api.builders.plan.branches.PlanBranchManagement;
 import com.atlassian.bamboo.specs.api.builders.project.Project;
 import com.atlassian.bamboo.specs.api.builders.task.Task;
-import com.atlassian.bamboo.specs.builders.task.CheckoutItem;
-import com.atlassian.bamboo.specs.builders.task.MavenTask;
 import com.atlassian.bamboo.specs.builders.task.ScriptTask;
-import com.atlassian.bamboo.specs.builders.task.VcsCheckoutTask;
 import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 
 
 
+
 /**
- * A static collection of Bamboo Specs constants that are used to create a Plan
- * in the GeRDI Bamboo project.
+ * A static collection of Bamboo Specs constants that are used to create Plans
+ * and Deployment Projects on the GeRDI Bamboo.
  *
  * @author Robin Weiss
  */
@@ -47,119 +42,39 @@ public class BambooConstants
     public static final String MAIN_HARVESTER_PATH = "%s/src/main/java/de/gerdiproject/harvest/harvester/";
     public static final Pattern HARVESTER_FILE_PATTERN = Pattern.compile("(\\w+)Harvester.java");
 
-    // GIT
-    public static final String GIT_CONFIG_PATH = "%s/.git/config";
-    public static final String GIT_GET_ROOT_COMMAND = "git rev-parse --show-toplevel";
-    public static final Pattern REPOSITORY_SLUG_PATTERN = Pattern.compile("\\s*url\\s?=[\\d\\D]+?/([^/]+?).git");
 
-    public static final String BITBUCKET_HARVESTER_NAME = "%s-Harvester";
-    public static final String BITBUCKET = "Bitbucket";
-    public static final String BITBUCKET_ID = "f0c4a002-9d93-3ac9-b18b-296394ec3180";
-    public static final String BITBUCKET_HARVESTER_PROJECT = "HAR";
-    public static final String GIT_MASTER_BRANCH = "master";
+    // Generic Bamboo Text
+    public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
 
-
-    // Maven
-    public static final String POM_XML_PATH = "%s/pom.xml";
-    public static final Pattern EMAIL_TAG_PATTERN = Pattern.compile("\\s*<email>([\\d\\D]+?)</email>\\s*");
-    public static final String DEVELOPERS_OPENING_TAG = "<developers>";
-    public static final String DEVELOPERS_CLOSING_TAG = "</developers>";
-
-    // Bamboo Names
-    public static final String DEFAULT_STAGE = "Default Stage";
     public static final String DEFAULT_JOB = "Default Job";
     public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
+    public static final String DEFAULT_JOB_STAGE = "Default Stage";
     public static final String HARVESTER_ABBREVIATION = "HAR";
     public static final String LOWER_CASE_REGEX = "[a-z]";
 
     public static final String PASSWORD_VARIABLE_KEY = "passwordGit";
 
-    public static final String ANALYSIS_PLAN_NAME = "Static Analysis: %s-Harvester";
+    public static final String ANALYSIS_PLAN_NAME = "%s-Harvester Static Analysis";
     public static final String ANALYSIS_PLAN_DESCRIPTION = "Static Analysis of the ${providerName} Harvester.";
 
-    public static final String DEPLOYMENT_PLAN_NAME = "Deploy %s-Harvester";
-    public static final String DEPLOYMENT_PLAN_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
+    public static final String DEPLOYMENT_PROJECT_NAME = "%s-Harvester";
+    public static final String DEPLOYMENT_PROJECT_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
+    public static final String PRODUCTION_DEPLOYMENT_ENV = "Production";
+    public static final String DEPLOYMENT_PROJECT_RELEASE_NAMING = "release-${bamboo.RELEASE_VERSION}";
 
-    // GeRDI Bamboo Projects
-    public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
 
+    // Projects
     public static final Project ANALYSIS_PROJECT = new Project()
     .oid(new BambooOid("tfn4xj9wxfcx"))
     .key(new BambooKey("CA"))
     .name("Code Analysis");
 
-    public static final Project DEPLOYMENT_PROJECT = new Project()
-    .oid(new BambooOid("tfn4xj9wxczl"))
-    .key(new BambooKey("DEP"))
-    .name("Deployment");
 
-
-    // GeRDI Bamboo Artifacts
-    public static final Artifact WAR_FILE_ARTIFACT = new Artifact()
-    .name("war")
-    .copyPattern("*.war")
-    .location("target")
-    .shared(true);
-
-
-    // GeRDI Bamboo Tasks
-    public static final Task<?, ?> REPOSITORY_CHECKOUT_TASK = new VcsCheckoutTask()
-    .description("Checkout Default Repository")
-    .checkoutItems(new CheckoutItem().defaultRepository());
-
-
-    public static final Task<?, ?> MAVEN_INSTALL_TASK = new MavenTask()
-    .description("Maven: Clean, Install")
-    .goal("clean install")
-    .jdk("JDK 1.8")
-    .executableLabel("Maven 3")
-    .hasTests(true)
-    .useMavenReturnCode(true);
-
-
-    public static final Task<?, ?> MAVEN_DOCKER_PUSH_TASK = new ScriptTask()
+    // Tasks
+    public static final Task<?, ?> DOCKER_PUSH_TASK = new ScriptTask()
     .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
-    .inlineBody(
-        "# for some reason, the Maven 3.x Bamboo Task interprets multiple arguments as one, so we need to use a script instead\n"
-        + "mvn clean verify -PdockerPush -Dexec.args=\"<maven> <gerdi>\"");
-
-
-    public static final Task<?, ?> ASTYLE_CHECK_TASK = new ScriptTask()
-    .description("AStyle Formatting-Check")
-    .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
-    .inlineBody(
-        "echo \"\\\\nChecking code formatting:\"\n\n"
-        + "formattingStyle=\"kr\"\n"
-        + "sourcePath=\"src\\\\\"\n"
-        + "astyleLibPath=\"\\\\usr\\lib\\astyle\\file\\\\\"\n\n"
-        + "# run AStyle without changing the files\n"
-        + "result=$(astyle --options=\"$astyleLibPath$formattingStyle.ini\" --dry-run --recursive --formatted $sourcePath*)\n\n"
-        + "# remove all text up until the name of the first unformatted file\n"
-        + "newResult=${result#*Formatted  }\n\n"
-        + "errorCount=0\n\n"
-        + "while [ \"$newResult\" != \"$result\" ]\ndo\n"
-        + "  errorCount=$(($errorCount + 1))\n"
-        + "  result=\"$newResult\"\n\n"
-        + "  # retrieve the name of the unformatted file\n"
-        + "  fileName=$(echo $result | sed -e \"s/Formatted .*//gi\")\n\n"
-        + "  # log the unformatted file\n"
-        + "  echo \"Unformatted File: $fileName\"\n\n"
-        + "  # remove all text up until the name of the next unformatted file\n"
-        + "  newResult=${result#*Formatted  }\n"
-        + "done\n\n"
-        + "if [ $errorCount -ne 0 ]; then\n"
-        + "  echo \"\\\\nFound $errorCount unformatted files! Please use the AristicStyle formatter before committing your code!\\\\n(see https://wiki.gerdi-project.de/display/GeRDI/%5BWIP%5D+How+to+Format+Code)\"\n"
-        + "  exit 1\n"
-        + "else\n"
-        + "  echo \"All files are properly formatted!\"\n"
-        + "  exit 0\n"
-        + "fi");
-
-
-    // Bamboo Branch Management
-    public static final PlanBranchManagement MANUAL_BRANCH_MANAGEMENT  = new PlanBranchManagement()
-    .delete(new BranchCleanup())
-    .notificationForCommitters();
+    .description("Create and add image to Docker registry")
+    .inlineBody("./scripts/docker-push.sh \"<maven>\" \"${bamboo.deploy.version}\" \"<gerdi>\"");
 
 
     /**

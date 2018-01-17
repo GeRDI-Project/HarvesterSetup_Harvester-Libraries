@@ -18,26 +18,41 @@
  */
 package de.gerdiproject.harvest.setup.constants;
 
+import java.util.regex.Pattern;
+
+import com.atlassian.bamboo.specs.api.builders.task.Task;
+import com.atlassian.bamboo.specs.builders.task.MavenTask;
+
+
 
 
 /**
- * A static collection of constants for logging purposes.
+ * A static collection of Maven related constants.
  *
  * @author Robin Weiss
  */
-public class LoggingConstants
+public class MavenConstants
 {
-    public static final String PROVIDER_CLASS_NAME = "ProviderClassName: ";
-    public static final String REPOSITORY_SLUG = "RepositorySlug: ";
-    public static final String BAMBOO_KEY = "BambooKey: ";
-    public static final String PROJECT_ROOT_DIR = "ProjectDirectory: ";
-    public static final String DEVELOPER_EMAILS = "DeveloperEmails:";
-    public static final String CONNECTING_TO_SERVER = "Connecting to Bamboo Server: %s";
+    public static final String POM_XML_PATH = "%s/pom.xml";
+    public static final Pattern EMAIL_TAG_PATTERN = Pattern.compile("\\s*<email>([\\d\\D]+?)</email>\\s*");
+    public static final String DEVELOPERS_OPENING_TAG = "<developers>";
+    public static final String DEVELOPERS_CLOSING_TAG = "</developers>";
+
+
+    // Tasks
+    public static final Task<?, ?> MAVEN_INSTALL_STRICT_TASK = new MavenTask()
+    .description("Maven: Code Style Check")
+    .goal("clean install -Pstrict")
+    .jdk("JDK 1.8")
+    .executableLabel("Maven 3")
+    .hasTests(true)
+    .useMavenReturnCode(true);
+
 
     /**
      * Private Constructor, because this is a static class.
      */
-    private LoggingConstants()
+    private MavenConstants()
     {
 
     }

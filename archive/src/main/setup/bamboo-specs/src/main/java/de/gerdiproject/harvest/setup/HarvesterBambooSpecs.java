@@ -25,8 +25,12 @@ import org.slf4j.LoggerFactory;
 
 import com.atlassian.bamboo.specs.api.BambooSpec;
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
-import com.atlassian.bamboo.specs.api.builders.Variable;
 import com.atlassian.bamboo.specs.api.builders.applink.ApplicationLink;
+import com.atlassian.bamboo.specs.api.builders.deployment.Deployment;
+import com.atlassian.bamboo.specs.api.builders.deployment.Environment;
+import com.atlassian.bamboo.specs.api.builders.deployment.ReleaseNaming;
+import com.atlassian.bamboo.specs.api.builders.permission.DeploymentPermissions;
+import com.atlassian.bamboo.specs.api.builders.permission.EnvironmentPermissions;
 import com.atlassian.bamboo.specs.api.builders.permission.PermissionType;
 import com.atlassian.bamboo.specs.api.builders.permission.Permissions;
 import com.atlassian.bamboo.specs.api.builders.permission.PlanPermissions;
@@ -40,11 +44,15 @@ import com.atlassian.bamboo.specs.api.builders.plan.configuration.ConcurrentBuil
 import com.atlassian.bamboo.specs.api.builders.repository.VcsChangeDetection;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepositoryViewer;
+import com.atlassian.bamboo.specs.builders.task.CleanWorkingDirectoryTask;
 import com.atlassian.bamboo.specs.builders.trigger.BitbucketServerTrigger;
 import com.atlassian.bamboo.specs.util.BambooServer;
 
+import de.gerdiproject.harvest.setup.constants.ArtifactConstants;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
+import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
 import de.gerdiproject.harvest.setup.constants.LoggingConstants;
+import de.gerdiproject.harvest.setup.constants.MavenConstants;
 import de.gerdiproject.harvest.setup.utils.ProjectUtils;
 
 /**
@@ -86,10 +94,10 @@ public class HarvesterBambooSpecs
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
         Plan staticAnalysisPlan = createStaticAnalysisPlan(repository, bambooKey, providerClassName);
-        publishPlan(bambooServer, staticAnalysisPlan, devEmails);
+        publish(bambooServer, staticAnalysisPlan, devEmails);
 
-        Plan deploymentPlan = createDeploymentPlan(repository, bambooKey, providerClassName);
-        publishPlan(bambooServer, deploymentPlan, devEmails);
+        Deployment deploymentProject = createDeploymentProject(repository, staticAnalysisPlan.getIdentifier(), providerClassName);
+        publish(bambooServer, deploymentProject, devEmails);
     }
 
 
@@ -116,14 +124,14 @@ public class HarvesterBambooSpecs
     private static BitbucketServerRepository createRepository(String providerClassName, String repositorySlug)
     {
         return new BitbucketServerRepository()
-               .name(String.format(BambooConstants.BITBUCKET_HARVESTER_NAME, providerClassName))
+               .name(String.format(RepositoryConstants.BITBUCKET_HARVESTER_NAME, providerClassName))
                .repositoryViewer(new BitbucketServerRepositoryViewer())
                .server(new ApplicationLink()
-                       .name(BambooConstants.BITBUCKET)
-                       .id(BambooConstants.BITBUCKET_ID))
-               .projectKey(BambooConstants.BITBUCKET_HARVESTER_PROJECT)
+                       .name(RepositoryConstants.BITBUCKET)
+                       .id(RepositoryConstants.BITBUCKET_ID))
+               .projectKey(RepositoryConstants.BITBUCKET_HARVESTER_PROJECT)
                .repositorySlug(repositorySlug)
-               .branch(BambooConstants.GIT_MASTER_BRANCH)
+               .branch(RepositoryConstants.GIT_MASTER_BRANCH)
                .shallowClonesEnabled(true)
                .remoteAgentCacheEnabled(false)
                .changeDetection(new VcsChangeDetection());
@@ -131,7 +139,7 @@ public class HarvesterBambooSpecs
 
 
     /**
-     * Creates a harvester deployment plan.
+     * Creates a harvester deployment project.
      *
      * @param repository the repository that is linked to the plan
      * @param bambooKey the bamboo key of the plan
@@ -139,30 +147,22 @@ public class HarvesterBambooSpecs
      *
      * @return a harvester deployment plan
      */
-    private static Plan createDeploymentPlan(BitbucketServerRepository repository, BambooKey bambooKey, String providerClassName)
+    private static Deployment createDeploymentProject(BitbucketServerRepository repository, PlanIdentifier sourcePlanIdentifier, String providerClassName)
     {
-        // set up plan
-        final Plan deploymentPlan = new Plan(
-            BambooConstants.DEPLOYMENT_PROJECT,
-            String.format(BambooConstants.DEPLOYMENT_PLAN_NAME, providerClassName),
-            bambooKey);
-        deploymentPlan.description(BambooConstants.ANALYSIS_PLAN_DESCRIPTION);
-        deploymentPlan.pluginConfigurations(new ConcurrentBuilds().useSystemWideDefault(false));
-        deploymentPlan.planRepositories(repository);
-        deploymentPlan.variables(new Variable(BambooConstants.PASSWORD_VARIABLE_KEY, ""));
-        deploymentPlan.planBranchManagement(BambooConstants.MANUAL_BRANCH_MANAGEMENT);
+        Deployment dep = new Deployment(sourcePlanIdentifier, String.format(BambooConstants.DEPLOYMENT_PROJECT_NAME, providerClassName));
+        dep.description(BambooConstants.DEPLOYMENT_PROJECT_DESCRIPTION);
+        dep.releaseNaming(new ReleaseNaming(BambooConstants.DEPLOYMENT_PROJECT_RELEASE_NAMING).autoIncrement(false));
 
-        // set up job
-        final Job defaultJob = new Job(
-            BambooConstants.DEFAULT_JOB,
-            BambooConstants.DEFAULT_JOB_KEY);
-        defaultJob.artifacts(BambooConstants.WAR_FILE_ARTIFACT);
-        defaultJob.tasks(BambooConstants.REPOSITORY_CHECKOUT_TASK,
-                         BambooConstants.MAVEN_DOCKER_PUSH_TASK);
+        // create checkout task
 
-        // add job to plan
-        deploymentPlan.stages(new Stage(BambooConstants.DEFAULT_STAGE).jobs(defaultJob));
-        return deploymentPlan;
+        // add production environment
+        Environment productionEnvironment = new Environment(BambooConstants.PRODUCTION_DEPLOYMENT_ENV)
+        .tasks(new CleanWorkingDirectoryTask(),
+               ArtifactConstants.DOWNLOAD_TASK,
+               BambooConstants.DOCKER_PUSH_TASK);
+        dep.environments(productionEnvironment);
+
+        return dep;
     }
 
 
@@ -182,7 +182,7 @@ public class HarvesterBambooSpecs
             BambooConstants.ANALYSIS_PROJECT,
             String.format(BambooConstants.ANALYSIS_PLAN_NAME, providerClassName),
             bambooKey);
-        analysisPlan.description(BambooConstants.DEPLOYMENT_PLAN_DESCRIPTION);
+        analysisPlan.description(BambooConstants.ANALYSIS_PLAN_DESCRIPTION);
         analysisPlan.pluginConfigurations(new ConcurrentBuilds().useSystemWideDefault(false));
         analysisPlan.planRepositories(repository);
         analysisPlan.triggers(new BitbucketServerTrigger());
@@ -193,12 +193,17 @@ public class HarvesterBambooSpecs
             BambooConstants.DEFAULT_JOB_KEY);
 
         defaultJob.tasks(
-            BambooConstants.REPOSITORY_CHECKOUT_TASK,
-            BambooConstants.MAVEN_INSTALL_TASK,
-            BambooConstants.ASTYLE_CHECK_TASK);
+            RepositoryConstants.CHECKOUT_TASK,
+            MavenConstants.MAVEN_INSTALL_STRICT_TASK);
+
+        defaultJob.artifacts(
+            ArtifactConstants.WAR_ARTIFACT,
+            ArtifactConstants.DOCKERFILE_ARTIFACT,
+            ArtifactConstants.SCRIPT_ARTIFACTS
+        );
 
         // add job to plan
-        analysisPlan.stages(new Stage(BambooConstants.DEFAULT_STAGE).jobs(defaultJob));
+        analysisPlan.stages(new Stage(BambooConstants.DEFAULT_JOB_STAGE).jobs(defaultJob));
 
         // auto-create plan branches, delete them after 1 day when the branch is removed in the repository
         analysisPlan.planBranchManagement(new PlanBranchManagement()
@@ -216,7 +221,7 @@ public class HarvesterBambooSpecs
      * @param plan the plan that is to be published
      * @param developerEmailAddresses email addresses of developers that will get access rights to the plan
      */
-    private static void publishPlan(BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
+    private static void publish(BambooServer bambooServer, Plan plan, List<String> developerEmailAddresses)
     {
         PlanIdentifier planId = plan.getIdentifier();
         bambooServer.publish(plan);
@@ -233,6 +238,35 @@ public class HarvesterBambooSpecs
                                        .loggedInUserPermissions(PermissionType.VIEW)
                                        .anonymousUserPermissionView());
             bambooServer.publish(planPermission);
+        }
+    }
+
+    /**
+     * Publishes a deployment project on a specified Bamboo server.
+     *
+     * @param bambooServer the server on which the plan is published
+     * @param deployment the deployment project that is to be published
+     * @param developerEmailAddresses email addresses of developers that will get view rights to the plan
+     */
+    private static void publish(BambooServer bambooServer, Deployment deployment, List<String> developerEmailAddresses)
+    {
+        String depName = deployment.getName();
+        bambooServer.publish(deployment);
+
+        for (String devEmail : developerEmailAddresses) {
+            DeploymentPermissions depPermission = new DeploymentPermissions(depName);
+            depPermission.permissions(new Permissions()
+                                      .userPermissions(devEmail, PermissionType.VIEW)
+                                      .loggedInUserPermissions(PermissionType.VIEW)
+                                      .anonymousUserPermissionView());
+            bambooServer.publish(depPermission);
+
+            EnvironmentPermissions envPermission = new EnvironmentPermissions(depName);
+            envPermission.environmentName(BambooConstants.PRODUCTION_DEPLOYMENT_ENV);
+            envPermission.permissions(new Permissions()
+                                      .userPermissions(devEmail, PermissionType.VIEW)
+                                      .loggedInUserPermissions(PermissionType.VIEW)
+                                      .anonymousUserPermissionView());
         }
     }
 }
