@@ -19,6 +19,7 @@
 	
 	<properties>
 		<dependency.plugin.version>3.0.2</dependency.plugin.version>
+		<setup.archive.dependency.version>1.0.1-SNAPSHOT</setup.archive.dependency.version>
 	</properties>
 	
 	<profiles>
@@ -56,7 +57,7 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>GeRDI-harvester-setup-archive</artifactId>
-					<version>${project.version}</version>
+					<version>${setup.archive.dependency.version}</version>
 					<classifier>resources</classifier>
 					<type>zip</type>
 					<!-- Make sure this isn't included on any classpath-->
