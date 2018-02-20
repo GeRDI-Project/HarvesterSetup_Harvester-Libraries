@@ -267,6 +267,7 @@ public class HarvesterBambooSpecs
                                       .userPermissions(devEmail, PermissionType.BUILD, PermissionType.VIEW)
                                       .loggedInUserPermissions(PermissionType.VIEW)
                                       .anonymousUserPermissionView());
+            bambooServer.publish(envPermission);
         }
     }
 }
