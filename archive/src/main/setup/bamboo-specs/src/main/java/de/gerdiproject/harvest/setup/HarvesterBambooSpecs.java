@@ -264,7 +264,7 @@ public class HarvesterBambooSpecs
             EnvironmentPermissions envPermission = new EnvironmentPermissions(depName);
             envPermission.environmentName(BambooConstants.PRODUCTION_DEPLOYMENT_ENV);
             envPermission.permissions(new Permissions()
-                                      .userPermissions(devEmail, PermissionType.VIEW)
+                                      .userPermissions(devEmail, PermissionType.BUILD, PermissionType.VIEW)
                                       .loggedInUserPermissions(PermissionType.VIEW)
                                       .anonymousUserPermissionView());
         }
