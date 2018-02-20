@@ -11,7 +11,7 @@
 	
 	<groupId>de.gerdi-project</groupId>
 	<artifactId>GeRDI-harvester-setup</artifactId>
-	<version>2.0.1-SNAPSHOT</version>
+	<version>2.0.2-SNAPSHOT</version>
 	
 	<packaging>pom</packaging>
 	<name>Harvester Project Setup</name>
@@ -19,7 +19,7 @@
 	
 	<properties>
 		<dependency.plugin.version>3.0.2</dependency.plugin.version>
-		<setup.archive.dependency.version>2.0.1-SNAPSHOT</setup.archive.dependency.version>
+		<setup.archive.dependency.version>2.0.2-SNAPSHOT</setup.archive.dependency.version>
 	</properties>
 	
 	<profiles>
