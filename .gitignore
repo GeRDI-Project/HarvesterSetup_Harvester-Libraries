@@ -1,12 +1,11 @@
 # Maven and misc. files
-/target/
-/archive/target/
-/lib/
-/bin/
-/build/
+**/target/
+**/lib/
+**/bin/
+**/build/
 
 # Eclipse project files
-/.settings/
+**/.settings/
 .project
 .classpath
 .gitignore
@@ -16,7 +15,7 @@
 project.xml
 
 # IntelliJ project files
-/.idea/
+**/.idea/
 **/*.iml
 
 # AStyle
