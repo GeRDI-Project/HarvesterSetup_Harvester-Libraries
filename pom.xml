@@ -54,8 +54,8 @@
 				</plugins>
 			</build>
 					
-			<!-- Harvester Setup Archive -->
 			<dependencies>
+				<!-- Harvester Setup Archive -->
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>GeRDI-harvester-setup-archive</artifactId>
@@ -65,18 +65,18 @@
 					<!-- Make sure this isn't included on any classpath-->
 					<scope>provided</scope>
 				</dependency>
-			</dependencies>
 			
-			<!-- Harvester Utilities Archive -->
-			<dependency>
-				<groupId>de.gerdi-project</groupId>
-				<artifactId>GeRDI-harvester-utilities-archive</artifactId>
-				<version>${harvesterutils.dependency.version}</version>
-				<classifier>resources</classifier>
-				<type>zip</type>
-				<!-- Make sure this isn't included on any classpath-->
-				<scope>provided</scope>
-			</dependency>
+				<!-- Harvester Utilities Archive -->
+				<dependency>
+					<groupId>de.gerdi-project</groupId>
+					<artifactId>GeRDI-harvester-utilities-archive</artifactId>
+					<version>${harvesterutils.dependency.version}</version>
+					<classifier>resources</classifier>
+					<type>zip</type>
+					<!-- Make sure this isn't included on any classpath-->
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 	
