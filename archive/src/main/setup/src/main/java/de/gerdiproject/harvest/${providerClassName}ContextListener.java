@@ -25,7 +25,7 @@ import javax.servlet.annotation.WebListener;
 /**
  * This class initializes the {@linkplain ${providerClassName}Harvester} and all required classes.
  *
- * @author Robin Weiss
+ * @author ${authorFullName}
  */
 @WebListener
 public class ${providerClassName}ContextListener extends ContextListener<${providerClassName}Harvester>
