@@ -108,6 +108,7 @@ public class HarvesterBambooSpecs
     /**
      * Sets up a connection to a Bamboo server.
      *
+     * @param credentials a Bamboo administrator user name and password
      * @return a Bamboo server connection
      */
     private static BambooServer getBambooServer( UserPasswordCredentials credentials)
