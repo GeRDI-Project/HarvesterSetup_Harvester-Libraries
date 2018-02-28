@@ -76,7 +76,7 @@ public class HarvesterBambooSpecs
      */
     public static void main(String[] args)
     {
-        final UserPasswordCredentials adminUser = new SimpleUserPasswordCredentials(args[1], args[2]);
+        final UserPasswordCredentials adminUser = new SimpleUserPasswordCredentials(args[0], args[1]);
         
         final ProjectUtils utils = new ProjectUtils();
 
