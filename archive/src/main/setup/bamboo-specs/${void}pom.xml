@@ -17,8 +17,31 @@
 	<properties>
 		<slf4j.dependency.version>1.7.25</slf4j.dependency.version>
 		<logbackclassic.dependency.version>1.2.3</logbackclassic.dependency.version>
+		<exec.plugin.version>1.6.0</exec.plugin.version>
 	</properties>
-
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>Bamboo Specs</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>de.gerdiproject.harvest.setup.HarvesterBambooSpecs</mainClass>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+    
 	<dependencies>
 		<!-- Required by BambooSpecs -->
 		<dependency>
