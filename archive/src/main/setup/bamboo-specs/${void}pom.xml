@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>com.atlassian.bamboo</groupId>
 		<artifactId>bamboo-specs-parent</artifactId>
-		<version>6.2.2</version>
+		<version>6.4.0</version>
 		<relativePath/>
 	</parent>
 
 	<groupId>de.gerdi-project</groupId>
 	<artifactId>bamboo-specs</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<properties>
