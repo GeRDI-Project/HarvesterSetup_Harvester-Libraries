@@ -47,6 +47,8 @@ import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepo
 import com.atlassian.bamboo.specs.builders.task.CleanWorkingDirectoryTask;
 import com.atlassian.bamboo.specs.builders.trigger.BitbucketServerTrigger;
 import com.atlassian.bamboo.specs.util.BambooServer;
+import com.atlassian.bamboo.specs.util.SimpleUserPasswordCredentials;
+import com.atlassian.bamboo.specs.util.UserPasswordCredentials;
 
 import de.gerdiproject.harvest.setup.constants.ArtifactConstants;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
@@ -74,6 +76,8 @@ public class HarvesterBambooSpecs
      */
     public static void main(String[] args)
     {
+        final UserPasswordCredentials adminUser = new SimpleUserPasswordCredentials(args[1], args[2]);
+        
         final ProjectUtils utils = new ProjectUtils();
 
         final String providerClassName = utils.getProviderClassName();
@@ -89,8 +93,8 @@ public class HarvesterBambooSpecs
         final StringBuilder sb = new StringBuilder(LoggingConstants.DEVELOPER_EMAILS);
         devEmails.forEach((String email) -> sb.append(' ').append(email));
         LOGGER.info(sb.toString());
-
-        final BambooServer bambooServer = getBambooServer();
+        
+        final BambooServer bambooServer = getBambooServer( adminUser );
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
         Plan staticAnalysisPlan = createStaticAnalysisPlan(repository, bambooKey, providerClassName);
@@ -106,10 +110,10 @@ public class HarvesterBambooSpecs
      *
      * @return a Bamboo server connection
      */
-    private static BambooServer getBambooServer()
+    private static BambooServer getBambooServer( UserPasswordCredentials credentials)
     {
         LOGGER.info(String.format(LoggingConstants.CONNECTING_TO_SERVER, BambooConstants.BAMBOO_SERVER));
-        return new BambooServer(BambooConstants.BAMBOO_SERVER);
+        return new BambooServer(BambooConstants.BAMBOO_SERVER, credentials);
     }
 
 
@@ -175,6 +179,7 @@ public class HarvesterBambooSpecs
      *
      * @return a code analysis plan for the harvester service
      */
+    @SuppressWarnings("unchecked")
     private static Plan createStaticAnalysisPlan(BitbucketServerRepository repository, BambooKey bambooKey, String providerClassName)
     {
         // set up plan
