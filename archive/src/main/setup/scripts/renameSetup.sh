@@ -123,7 +123,7 @@ RenameDirectory  () {
  originalDir=$(realpath $1)
  renamedDir=$(realpath -q $(echo $1 | sed -e "s~\${providerPackageName}~${providerPackageName}~g"))
  if [ "$originalDir" != "$renamedDir" ]; then
-   mv -f $originalDir $renamedDir
+   mv -f "$originalDir" "$renamedDir"
    echo "Renamed $1 to $renamedDir" >&2
  fi
  echo "$renamedDir"
@@ -170,4 +170,4 @@ providerClassName=$(GetProviderClassName "$providerName" "$illegalChars")
 providerPackageName=$(GetProviderPackageName "$providerClassName")
 
 # run the main function on the current folder
-RenameFilesInDirectory ${PWD}
+RenameFilesInDirectory "$PWD"
