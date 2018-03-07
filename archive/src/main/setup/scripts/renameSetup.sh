@@ -28,13 +28,15 @@
 #  6 authorOrganizationUrl
 #  7 parentHarvesterVersion
 
+# treat unset variables as an error when substituting
+set -u
 
 #########################
 #  FUNCTION DEFINITIONS #
 #########################
 
 # Returns a Java naming compliant class name by removing illegal characters from a 
-# specified string and seting the characters that follow the removed characters to upper case.
+# specified string and setting the characters that follow the removed characters to upper case.
 #  Arguments:
 #  1 - the string that is to be processed
 #  2 - a string containing all characters that are to be removed
@@ -84,12 +86,13 @@ GetRepositorySlug () {
 }
 
 
-# Recursively replaced placeholders in files, directories and file content of a specified directory.
+# Within a specified folder and all sub-folders, replaces all placeholders in 
+# file- and directory names and inside file content.
 #  Arguments:
 #  1 - the directory that is to be processed
 #
 RenameFilesInDirectory () {
- for file in $1/*
+ for file in "$1/*"
  do
   if [ -d "$file" ]; then
     newDirName=$(RenameDirectory "$file")
