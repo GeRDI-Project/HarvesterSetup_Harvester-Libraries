@@ -91,12 +91,12 @@ GetRepositorySlug () {
 RenameFilesInDirectory () {
  for file in $1/*
  do
-  if [ -d $file ]; then
-    newDirName=$(RenameDirectory $file)
-    RenameFilesInDirectory $newDirName
-  elif [ -f $file ]; then
-    RenameFileContent $file
-    RenameFile $file
+  if [ -d "$file" ]; then
+    newDirName=$(RenameDirectory "$file")
+    RenameFilesInDirectory "$newDirName"
+  elif [ -f "$file" ]; then
+    RenameFileContent "$file"
+    RenameFile "$file"
   fi
  done
 }
@@ -107,9 +107,9 @@ RenameFilesInDirectory () {
 #  1 - the file that is to be renamed
 #
 RenameFile  () {
- renamedFile=$(echo $1 | sed -e "s~\${providerClassName}~${providerClassName}~g" -e "s~\${void}~~g")
+ renamedFile=$(echo "$1" | sed -e "s~\${providerClassName}~${providerClassName}~g" -e "s~\${void}~~g")
  if [ "$renamedFile" != "$1" ]; then
-   mv -f $1 $renamedFile
+   mv -f "$1" "$renamedFile"
    echo "Renamed $1 to $renamedFile" >&2
  fi
 }
@@ -120,8 +120,8 @@ RenameFile  () {
 #  1 - the directory that is to be renamed
 #
 RenameDirectory  () {
- originalDir=$(realpath $1)
- renamedDir=$(realpath -q $(echo $1 | sed -e "s~\${providerPackageName}~${providerPackageName}~g"))
+ originalDir=$(realpath "$1")
+ renamedDir=$(realpath -q $(echo "$1" | sed -e "s~\${providerPackageName}~${providerPackageName}~g"))
  if [ "$originalDir" != "$renamedDir" ]; then
    mv -f "$originalDir" "$renamedDir"
    echo "Renamed $1 to $renamedDir" >&2
