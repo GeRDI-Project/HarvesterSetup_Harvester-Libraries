@@ -13,6 +13,7 @@
     <packaging>war</packaging>
 	<name>${providerName} Harvester Service</name>
 	<description>This is a restful harvester for retrieving data from ${providerUrl}</description>
+	<inceptionYear>${creationYear}</inceptionYear>
   
 	<developers>
 		<developer>
