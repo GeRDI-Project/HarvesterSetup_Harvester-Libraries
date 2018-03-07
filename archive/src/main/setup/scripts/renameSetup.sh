@@ -92,7 +92,7 @@ GetRepositorySlug () {
 #  1 - the directory that is to be processed
 #
 RenameFilesInDirectory () {
- for file in "$1/*"
+ for file in "$1"/*
  do
   if [ -d "$file" ]; then
     newDirName=$(RenameDirectory "$file")
