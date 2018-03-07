@@ -11,11 +11,12 @@
 	
 	<groupId>de.gerdi-project</groupId>
 	<artifactId>GeRDI-harvester-setup-archive</artifactId>
-	<version>2.1.1-SNAPSHOT</version>
+	<version>2.1.2-SNAPSHOT</version>
 	
 	<packaging>pom</packaging>
 	<name>Harvester Project Setup Archive</name>
 	<description>This project includes bundles files for setting up a harvester project.</description>
+	<inceptionYear>${creationYear}</inceptionYear>
 	
 	<properties>
 		<assembly.plugin.version>3.1.0</assembly.plugin.version>
@@ -44,6 +45,15 @@
             </plugin>
         </plugins>
     </build>
+	
+	<developers>
+		<developer>
+			<name>Robin Weiss</name>
+			<email>row@informatik.uni-kiel.de</email>
+			<organization>Kiel University</organization>
+			<organizationUrl>http://www.uni-kiel.de/index-e.shtml</organizationUrl>
+		</developer>
+	</developers>
 	
 	<!-- Define Sonatype repository for retrieving SNAPSHOT versions -->
 	<repositories>
