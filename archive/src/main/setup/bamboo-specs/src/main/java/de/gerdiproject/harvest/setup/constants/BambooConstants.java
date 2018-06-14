@@ -19,9 +19,13 @@ import java.util.regex.Pattern;
 
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
 import com.atlassian.bamboo.specs.api.builders.BambooOid;
+import com.atlassian.bamboo.specs.api.builders.deployment.Environment;
+import com.atlassian.bamboo.specs.api.builders.deployment.ReleaseNaming;
 import com.atlassian.bamboo.specs.api.builders.project.Project;
 import com.atlassian.bamboo.specs.api.builders.task.Task;
+import com.atlassian.bamboo.specs.builders.task.CleanWorkingDirectoryTask;
 import com.atlassian.bamboo.specs.builders.task.ScriptTask;
+import com.atlassian.bamboo.specs.builders.trigger.AfterSuccessfulBuildPlanTrigger;
 import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 
 
@@ -38,6 +42,9 @@ public class BambooConstants
     // Files
     public static final String MAIN_HARVESTER_PATH = "%s/src/main/java/de/gerdiproject/harvest/harvester/";
     public static final Pattern HARVESTER_FILE_PATTERN = Pattern.compile("(\\w+)Harvester.java");
+
+    // Plans
+    public static final String VERSION_SUFFIX_PLAN_VARIABLE = "versionSuffix";
 
 
     // Generic Bamboo Text
@@ -56,8 +63,10 @@ public class BambooConstants
 
     public static final String DEPLOYMENT_PROJECT_NAME = "%s-Harvester";
     public static final String DEPLOYMENT_PROJECT_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
-    public static final String PRODUCTION_DEPLOYMENT_ENV = "Production";
-    public static final String DEPLOYMENT_PROJECT_RELEASE_NAMING = "${bamboo.RELEASE_VERSION}";
+    public static final ReleaseNaming DEPLOYMENT_RELEASE_NAMING =
+        new ReleaseNaming("${bamboo.RELEASE_VERSION}${bamboo." + VERSION_SUFFIX_PLAN_VARIABLE + "}")
+    .applicableToBranches(true)
+    .variablesToAutoIncrement(VERSION_SUFFIX_PLAN_VARIABLE);
 
 
     // Projects
@@ -69,10 +78,36 @@ public class BambooConstants
 
     // Tasks
     public static final Task<?, ?> DOCKER_PUSH_TASK = new ScriptTask()
-    .interpreter(ScriptTaskProperties.Interpreter.BINSH_OR_CMDEXE)
-    .description("Create and add image to Docker registry")
-    .inlineBody("./scripts/docker-push.sh \"<maven>\" \"${bamboo.deploy.version}\" \"<gerdi>\"");
+    .location(ScriptTaskProperties.Location.FILE)
+    .fileFromPath(ArtifactConstants.SCRIPTS_DIR + "/docker-push.sh")
+    .description("Create and add an image to the Docker registry")
+    .argument("\"<maven>\" \"${bamboo.deploy.version}\" \"<gerdi>\"");
 
+
+    // Environments
+    public static final String PRODUCTION_ENVIRONMENT_NAME = "Production";
+    public static final Environment PRODUCTION_ENVIRONMENT = new Environment(BambooConstants.PRODUCTION_ENVIRONMENT_NAME)
+    .tasks(new CleanWorkingDirectoryTask(),
+           ArtifactConstants.DOWNLOAD_TASK,
+           BambooConstants.DOCKER_PUSH_TASK)
+    .triggers(new AfterSuccessfulBuildPlanTrigger()
+              .triggerByBranch("production"));
+
+    public static final String STAGE_ENVIRONMENT_NAME = "Stage";
+    public static final Environment STAGE_ENVIRONMENT = new Environment(BambooConstants.STAGE_ENVIRONMENT_NAME)
+    .tasks(new CleanWorkingDirectoryTask(),
+           ArtifactConstants.DOWNLOAD_TASK,
+           BambooConstants.DOCKER_PUSH_TASK)
+    .triggers(new AfterSuccessfulBuildPlanTrigger()
+              .triggerByBranch("stage"));
+
+    public static final String TEST_ENVIRONMENT_NAME = "Test";
+    public static final Environment TEST_ENVIRONMENT = new Environment(BambooConstants.TEST_ENVIRONMENT_NAME)
+    .tasks(new CleanWorkingDirectoryTask(),
+           ArtifactConstants.DOWNLOAD_TASK,
+           BambooConstants.DOCKER_PUSH_TASK)
+    .triggers(new AfterSuccessfulBuildPlanTrigger()
+              .triggerByBranch("master"));
 
     /**
      * Private Constructor, because this is a static class.

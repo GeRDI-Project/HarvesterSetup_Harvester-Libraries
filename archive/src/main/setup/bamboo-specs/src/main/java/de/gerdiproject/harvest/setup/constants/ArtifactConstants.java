@@ -36,7 +36,6 @@ public class ArtifactConstants
 
     // Directories
     private static final String TARGET_DIR = "target";
-    private static final String SCRIPTS_DIR = "scripts";
     private static final String WORKING_DIR = "";
 
     // Names
@@ -53,6 +52,7 @@ public class ArtifactConstants
     /////////////
     // PUBLIC  //
     /////////////
+    public static final String SCRIPTS_DIR = "scripts";
 
     // Plan Definitions
     public static final Artifact WAR_ARTIFACT = new Artifact()

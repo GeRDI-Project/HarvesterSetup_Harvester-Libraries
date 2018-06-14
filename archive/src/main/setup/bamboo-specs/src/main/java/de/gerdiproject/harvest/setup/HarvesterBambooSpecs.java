@@ -24,8 +24,6 @@ import com.atlassian.bamboo.specs.api.BambooSpec;
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
 import com.atlassian.bamboo.specs.api.builders.applink.ApplicationLink;
 import com.atlassian.bamboo.specs.api.builders.deployment.Deployment;
-import com.atlassian.bamboo.specs.api.builders.deployment.Environment;
-import com.atlassian.bamboo.specs.api.builders.deployment.ReleaseNaming;
 import com.atlassian.bamboo.specs.api.builders.permission.DeploymentPermissions;
 import com.atlassian.bamboo.specs.api.builders.permission.EnvironmentPermissions;
 import com.atlassian.bamboo.specs.api.builders.permission.PermissionType;
@@ -41,7 +39,6 @@ import com.atlassian.bamboo.specs.api.builders.plan.configuration.ConcurrentBuil
 import com.atlassian.bamboo.specs.api.builders.repository.VcsChangeDetection;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepositoryViewer;
-import com.atlassian.bamboo.specs.builders.task.CleanWorkingDirectoryTask;
 import com.atlassian.bamboo.specs.builders.trigger.BitbucketServerTrigger;
 import com.atlassian.bamboo.specs.util.BambooServer;
 import com.atlassian.bamboo.specs.util.SimpleUserPasswordCredentials;
@@ -49,9 +46,9 @@ import com.atlassian.bamboo.specs.util.UserPasswordCredentials;
 
 import de.gerdiproject.harvest.setup.constants.ArtifactConstants;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
-import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
 import de.gerdiproject.harvest.setup.constants.LoggingConstants;
 import de.gerdiproject.harvest.setup.constants.MavenConstants;
+import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
 import de.gerdiproject.harvest.setup.utils.ProjectUtils;
 
 /**
@@ -74,7 +71,7 @@ public class HarvesterBambooSpecs
     public static void main(String[] args)
     {
         final UserPasswordCredentials adminUser = new SimpleUserPasswordCredentials(args[0], args[1]);
-        
+
         final ProjectUtils utils = new ProjectUtils();
 
         final String providerClassName = utils.getProviderClassName();
@@ -90,8 +87,8 @@ public class HarvesterBambooSpecs
         final StringBuilder sb = new StringBuilder(LoggingConstants.DEVELOPER_EMAILS);
         devEmails.forEach((String email) -> sb.append(' ').append(email));
         LOGGER.info(sb.toString());
-        
-        final BambooServer bambooServer = getBambooServer( adminUser );
+
+        final BambooServer bambooServer = getBambooServer(adminUser);
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
         Plan staticAnalysisPlan = createStaticAnalysisPlan(repository, bambooKey, providerClassName);
@@ -108,7 +105,7 @@ public class HarvesterBambooSpecs
      * @param credentials a Bamboo administrator user name and password
      * @return a Bamboo server connection
      */
-    private static BambooServer getBambooServer( UserPasswordCredentials credentials)
+    private static BambooServer getBambooServer(UserPasswordCredentials credentials)
     {
         LOGGER.info(String.format(LoggingConstants.CONNECTING_TO_SERVER, BambooConstants.BAMBOO_SERVER));
         return new BambooServer(BambooConstants.BAMBOO_SERVER, credentials);
@@ -153,16 +150,11 @@ public class HarvesterBambooSpecs
     {
         Deployment dep = new Deployment(sourcePlanIdentifier, String.format(BambooConstants.DEPLOYMENT_PROJECT_NAME, providerClassName));
         dep.description(BambooConstants.DEPLOYMENT_PROJECT_DESCRIPTION);
-        dep.releaseNaming(new ReleaseNaming(BambooConstants.DEPLOYMENT_PROJECT_RELEASE_NAMING).autoIncrement(false));
-
-        // create checkout task
-
-        // add production environment
-        Environment productionEnvironment = new Environment(BambooConstants.PRODUCTION_DEPLOYMENT_ENV)
-        .tasks(new CleanWorkingDirectoryTask(),
-               ArtifactConstants.DOWNLOAD_TASK,
-               BambooConstants.DOCKER_PUSH_TASK);
-        dep.environments(productionEnvironment);
+        dep.releaseNaming(BambooConstants.DEPLOYMENT_RELEASE_NAMING);
+        dep.environments(
+            BambooConstants.TEST_ENVIRONMENT,
+            BambooConstants.STAGE_ENVIRONMENT,
+            BambooConstants.PRODUCTION_ENVIRONMENT);
 
         return dep;
     }
@@ -233,11 +225,8 @@ public class HarvesterBambooSpecs
             PlanPermissions planPermission = new PlanPermissions(planId);
             planPermission.permissions(new Permissions()
                                        .userPermissions(devEmail,
-                                                        PermissionType.EDIT,
                                                         PermissionType.VIEW,
-                                                        PermissionType.ADMIN,
-                                                        PermissionType.CLONE,
-                                                        PermissionType.BUILD)
+                                                        PermissionType.CLONE)
                                        .loggedInUserPermissions(PermissionType.VIEW)
                                        .anonymousUserPermissionView());
             bambooServer.publish(planPermission);
@@ -264,13 +253,30 @@ public class HarvesterBambooSpecs
                                       .anonymousUserPermissionView());
             bambooServer.publish(depPermission);
 
-            EnvironmentPermissions envPermission = new EnvironmentPermissions(depName);
-            envPermission.environmentName(BambooConstants.PRODUCTION_DEPLOYMENT_ENV);
-            envPermission.permissions(new Permissions()
-                                      .userPermissions(devEmail, PermissionType.BUILD, PermissionType.VIEW)
-                                      .loggedInUserPermissions(PermissionType.VIEW)
-                                      .anonymousUserPermissionView());
-            bambooServer.publish(envPermission);
+            // publish environment permissions
+            EnvironmentPermissions testPermission = new EnvironmentPermissions(depName);
+            testPermission.environmentName(BambooConstants.TEST_ENVIRONMENT_NAME);
+            testPermission.permissions(new Permissions()
+                                       .userPermissions(devEmail, PermissionType.VIEW)
+                                       .loggedInUserPermissions(PermissionType.VIEW)
+                                       .anonymousUserPermissionView());
+            bambooServer.publish(testPermission);
+
+            EnvironmentPermissions stagePermission = new EnvironmentPermissions(depName);
+            stagePermission.environmentName(BambooConstants.STAGE_ENVIRONMENT_NAME);
+            stagePermission.permissions(new Permissions()
+                                        .userPermissions(devEmail, PermissionType.VIEW)
+                                        .loggedInUserPermissions(PermissionType.VIEW)
+                                        .anonymousUserPermissionView());
+            bambooServer.publish(stagePermission);
+
+            EnvironmentPermissions productionPermission = new EnvironmentPermissions(depName);
+            productionPermission.environmentName(BambooConstants.PRODUCTION_ENVIRONMENT_NAME);
+            productionPermission.permissions(new Permissions()
+                                             .userPermissions(devEmail, PermissionType.VIEW)
+                                             .loggedInUserPermissions(PermissionType.VIEW)
+                                             .anonymousUserPermissionView());
+            bambooServer.publish(productionPermission);
         }
     }
 }
