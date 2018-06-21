@@ -44,7 +44,11 @@ public class BambooConstants
     public static final Pattern HARVESTER_FILE_PATTERN = Pattern.compile("(\\w+)Harvester.java");
 
     // Plans
-    public static final String VERSION_SUFFIX_PLAN_VARIABLE = "versionSuffix";
+    public static final String VERSION_SUFFIX_VARIABLE_KEY = "versionSuffix";
+    
+    public static final String VERSION_SUFFIX_PLAN_VARIABLE_VALUE_TEST = "-test1";
+    public static final String VERSION_SUFFIX_PLAN_VARIABLE_VALUE_STAGE = "-rc1";
+    public static final String VERSION_SUFFIX_PLAN_VARIABLE_VALUE_PRODUCTION = "";
 
 
     // Generic Bamboo Text
@@ -64,9 +68,9 @@ public class BambooConstants
     public static final String DEPLOYMENT_PROJECT_NAME = "%s-Harvester";
     public static final String DEPLOYMENT_PROJECT_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
     public static final ReleaseNaming DEPLOYMENT_RELEASE_NAMING =
-        new ReleaseNaming("${bamboo.RELEASE_VERSION}${bamboo." + VERSION_SUFFIX_PLAN_VARIABLE + "}")
+        new ReleaseNaming("${bamboo.RELEASE_VERSION}${bamboo.inject" + VERSION_SUFFIX_VARIABLE_KEY + "}")
     .applicableToBranches(true)
-    .variablesToAutoIncrement(VERSION_SUFFIX_PLAN_VARIABLE);
+    .autoIncrement(false);
 
 
     // Projects
