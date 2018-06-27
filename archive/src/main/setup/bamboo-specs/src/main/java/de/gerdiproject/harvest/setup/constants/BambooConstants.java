@@ -44,12 +44,7 @@ public class BambooConstants
     public static final Pattern HARVESTER_FILE_PATTERN = Pattern.compile("(\\w+)Harvester.java");
 
     // Plans
-    public static final String VERSION_SUFFIX_VARIABLE_KEY = "versionSuffix";
-    
-    public static final String VERSION_SUFFIX_PLAN_VARIABLE_VALUE_TEST = "-test1";
-    public static final String VERSION_SUFFIX_PLAN_VARIABLE_VALUE_STAGE = "-rc1";
-    public static final String VERSION_SUFFIX_PLAN_VARIABLE_VALUE_PRODUCTION = "";
-
+    public static final String TAG_VERSION_VARIABLE = "${bamboo.inject.tag.version}";
 
     // Generic Bamboo Text
     public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
@@ -68,7 +63,7 @@ public class BambooConstants
     public static final String DEPLOYMENT_PROJECT_NAME = "%s-Harvester";
     public static final String DEPLOYMENT_PROJECT_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
     public static final ReleaseNaming DEPLOYMENT_RELEASE_NAMING =
-        new ReleaseNaming("${bamboo.RELEASE_VERSION}${bamboo.inject" + VERSION_SUFFIX_VARIABLE_KEY + "}")
+        new ReleaseNaming(TAG_VERSION_VARIABLE)
     .applicableToBranches(true)
     .autoIncrement(false);
 
@@ -83,33 +78,43 @@ public class BambooConstants
     // Tasks
     public static final Task<?, ?> DOCKER_PUSH_TASK = new ScriptTask()
     .location(ScriptTaskProperties.Location.FILE)
+    .description("Docker Push")
     .fileFromPath(ArtifactConstants.SCRIPTS_DIR + "/docker-push.sh")
     .description("Create and add an image to the Docker registry")
-    .argument("\"<maven>\" \"${bamboo.deploy.version}\" \"<gerdi>\"");
+    .argument("\"<maven>\" \"" + TAG_VERSION_VARIABLE + "\" \"<gerdi>\"");
+
+    public static final Task<?, ?> BITBUCKET_TAG_TASK = new ScriptTask()
+    .description("Tag Git Repository")
+    .location(ScriptTaskProperties.Location.FILE)
+    .fileFromPath("./scripts/deployment/tag-bitbucket-repository.sh")
+    .argument(TAG_VERSION_VARIABLE);
 
 
     // Environments
     public static final String PRODUCTION_ENVIRONMENT_NAME = "Production";
-    public static final Environment PRODUCTION_ENVIRONMENT = new Environment(BambooConstants.PRODUCTION_ENVIRONMENT_NAME)
+    public static final Environment PRODUCTION_ENVIRONMENT = new Environment(PRODUCTION_ENVIRONMENT_NAME)
     .tasks(new CleanWorkingDirectoryTask(),
-           ArtifactConstants.DOWNLOAD_TASK,
-           BambooConstants.DOCKER_PUSH_TASK)
+           ArtifactConstants.DOWNLOAD_ALL_TASK,
+           DOCKER_PUSH_TASK,
+           BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger()
               .triggerByBranch("production"));
 
     public static final String STAGE_ENVIRONMENT_NAME = "Stage";
-    public static final Environment STAGE_ENVIRONMENT = new Environment(BambooConstants.STAGE_ENVIRONMENT_NAME)
+    public static final Environment STAGE_ENVIRONMENT = new Environment(STAGE_ENVIRONMENT_NAME)
     .tasks(new CleanWorkingDirectoryTask(),
-           ArtifactConstants.DOWNLOAD_TASK,
-           BambooConstants.DOCKER_PUSH_TASK)
+           ArtifactConstants.DOWNLOAD_ALL_TASK,
+           DOCKER_PUSH_TASK,
+           BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger()
               .triggerByBranch("stage"));
 
     public static final String TEST_ENVIRONMENT_NAME = "Test";
-    public static final Environment TEST_ENVIRONMENT = new Environment(BambooConstants.TEST_ENVIRONMENT_NAME)
+    public static final Environment TEST_ENVIRONMENT = new Environment(TEST_ENVIRONMENT_NAME)
     .tasks(new CleanWorkingDirectoryTask(),
-           ArtifactConstants.DOWNLOAD_TASK,
-           BambooConstants.DOCKER_PUSH_TASK)
+           ArtifactConstants.DOWNLOAD_ALL_TASK,
+           DOCKER_PUSH_TASK,
+           BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger()
               .triggerByBranch("master"));
 

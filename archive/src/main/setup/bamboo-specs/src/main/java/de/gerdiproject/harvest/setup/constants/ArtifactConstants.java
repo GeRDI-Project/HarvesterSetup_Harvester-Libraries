@@ -75,15 +75,10 @@ public class ArtifactConstants
 
 
     // Tasks
-    public static final Task<?, ?> DOWNLOAD_TASK = new ArtifactDownloaderTask()
+    public static final Task<?, ?> DOWNLOAD_ALL_TASK = new ArtifactDownloaderTask()
+    .description("Download Artifacts")
     .artifacts(new DownloadItem()
-               .artifact(WAR_ARTIFACT_NAME)
-               .path(TARGET_DIR),
-               new DownloadItem()
-               .artifact(SCRIPTS_ARTIFACT_NAME)
-               .path(SCRIPTS_DIR),
-               new DownloadItem()
-               .artifact(DOCKERFILE_ARTIFACT_NAME));
+               .allArtifacts(true));
 
 
     /**
