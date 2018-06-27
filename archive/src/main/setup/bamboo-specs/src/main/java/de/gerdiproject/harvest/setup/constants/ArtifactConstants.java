@@ -30,47 +30,31 @@ import com.atlassian.bamboo.specs.builders.task.DownloadItem;
  */
 public class ArtifactConstants
 {
-    //////////////
-    // PRIVATE  //
-    //////////////
+    private static final String SCRIPTS_PATTERN = RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/**/*";
 
-    // Directories
-    private static final String TARGET_DIR = "target";
-    private static final String WORKING_DIR = "";
-
-    // Names
-    private static final String WAR_ARTIFACT_NAME = "warFile";
-    private static final String SCRIPTS_ARTIFACT_NAME = "scripts";
-    private static final String DOCKERFILE_ARTIFACT_NAME = "dockerfile";
-
-    // Copy Patterns
-    private static final String WAR_PATTERN = "*.war";
-    private static final String SCRIPTS_PATTERN = "**/*";
-    private static final String DOCKERFILE_PATTERN = "Dockerfile";
-
-
-    /////////////
-    // PUBLIC  //
-    /////////////
-    public static final String SCRIPTS_DIR = "scripts";
 
     // Plan Definitions
     public static final Artifact WAR_ARTIFACT = new Artifact()
-    .name(WAR_ARTIFACT_NAME)
-    .copyPattern(WAR_PATTERN)
-    .location(TARGET_DIR)
-    .shared(true);
-
-    public static final Artifact SCRIPT_ARTIFACTS = new Artifact()
-    .name(SCRIPTS_ARTIFACT_NAME)
-    .copyPattern(SCRIPTS_PATTERN)
-    .location(SCRIPTS_DIR)
+    .name("warFile")
+    .copyPattern("target/*.war")
+    .location(RepositoryConstants.HARVESTER_WORKING_DIR)
     .shared(true);
 
     public static final Artifact DOCKERFILE_ARTIFACT = new Artifact()
-    .name(DOCKERFILE_ARTIFACT_NAME)
-    .copyPattern(DOCKERFILE_PATTERN)
-    .location(WORKING_DIR)
+    .name("dockerfile")
+    .copyPattern("Dockerfile")
+    .location(RepositoryConstants.HARVESTER_WORKING_DIR)
+    .shared(true);
+
+    public static final Artifact SCRIPT_ARTIFACTS = new Artifact()
+    .name("scripts")
+    .copyPattern(SCRIPTS_PATTERN)
+    .shared(true);
+
+    public static final Artifact UTIL_SCRIPT_ARTIFACT = new Artifact()
+    .name("harvesterUtilsScripts")
+    .copyPattern(SCRIPTS_PATTERN)
+    .location(RepositoryConstants.HARVESTER_WORKING_DIR)
     .shared(true);
 
 

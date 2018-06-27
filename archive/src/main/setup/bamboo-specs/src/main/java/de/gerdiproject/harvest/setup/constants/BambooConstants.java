@@ -21,11 +21,15 @@ import com.atlassian.bamboo.specs.api.builders.BambooKey;
 import com.atlassian.bamboo.specs.api.builders.BambooOid;
 import com.atlassian.bamboo.specs.api.builders.deployment.Environment;
 import com.atlassian.bamboo.specs.api.builders.deployment.ReleaseNaming;
+import com.atlassian.bamboo.specs.api.builders.plan.branches.BranchCleanup;
+import com.atlassian.bamboo.specs.api.builders.plan.branches.PlanBranchManagement;
 import com.atlassian.bamboo.specs.api.builders.project.Project;
 import com.atlassian.bamboo.specs.api.builders.task.Task;
 import com.atlassian.bamboo.specs.builders.task.CleanWorkingDirectoryTask;
+import com.atlassian.bamboo.specs.builders.task.InjectVariablesTask;
 import com.atlassian.bamboo.specs.builders.task.ScriptTask;
 import com.atlassian.bamboo.specs.builders.trigger.AfterSuccessfulBuildPlanTrigger;
+import com.atlassian.bamboo.specs.model.task.InjectVariablesScope;
 import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 
 
@@ -42,9 +46,18 @@ public class BambooConstants
     // Files
     public static final String MAIN_HARVESTER_PATH = "%s/src/main/java/de/gerdiproject/harvest/harvester/";
     public static final Pattern HARVESTER_FILE_PATTERN = Pattern.compile("(\\w+)Harvester.java");
+    public static final String VERSION_VARIABLE_FILE = "injectedVersions.ini";
 
     // Plans
-    public static final String TAG_VERSION_VARIABLE = "${bamboo.inject.tag.version}";
+    public static final String VARIABLE_INJECTION_NAMESPACE = "inject";
+    public static final String TAG_VERSION_VARIABLE = "${bamboo." + VARIABLE_INJECTION_NAMESPACE + ".tag.version}";
+
+    public static final PlanBranchManagement REMOVE_PLAN_BRANCH_AFTER_ONE_DAY =
+        new PlanBranchManagement()
+    .createForVcsBranch()
+    .delete(new BranchCleanup()
+            .whenRemovedFromRepositoryAfterDays(1))
+    .notificationForCommitters();
 
     // Generic Bamboo Text
     public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
@@ -79,7 +92,7 @@ public class BambooConstants
     public static final Task<?, ?> DOCKER_PUSH_TASK = new ScriptTask()
     .location(ScriptTaskProperties.Location.FILE)
     .description("Docker Push")
-    .fileFromPath(ArtifactConstants.SCRIPTS_DIR + "/docker-push.sh")
+    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/docker-push.sh")
     .description("Create and add an image to the Docker registry")
     .argument("\"<maven>\" \"" + TAG_VERSION_VARIABLE + "\" \"<gerdi>\"");
 
@@ -88,6 +101,21 @@ public class BambooConstants
     .location(ScriptTaskProperties.Location.FILE)
     .fileFromPath("./scripts/deployment/tag-bitbucket-repository.sh")
     .argument(TAG_VERSION_VARIABLE);
+
+    public static final Task<?, ?> PREPARE_VERSION_VARIABLES_TASK = new ScriptTask()
+    .description("Prepare Export of Version Variables")
+    .location(ScriptTaskProperties.Location.FILE)
+    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/plans/codeAnalysis/exportVersionVariables.sh")
+    .argument(String.format("\"%s\" \"%s\" \"%s\"",
+                            RepositoryConstants.HARVESTER_WORKING_DIR,
+                            RepositoryConstants.HARVESTER_WORKING_DIR,
+                            VERSION_VARIABLE_FILE));
+
+    public static final Task<?, ?> EXPORT_VERSION_VARIABLES_TASK = new InjectVariablesTask()
+    .description("Export Version Variables")
+    .path(VERSION_VARIABLE_FILE)
+    .namespace(VARIABLE_INJECTION_NAMESPACE)
+    .scope(InjectVariablesScope.RESULT);
 
 
     // Environments

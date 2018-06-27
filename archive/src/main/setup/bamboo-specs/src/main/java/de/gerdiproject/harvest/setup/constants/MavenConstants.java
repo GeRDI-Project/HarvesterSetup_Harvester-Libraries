@@ -38,11 +38,12 @@ public class MavenConstants
 
     // Tasks
     public static final Task<?, ?> MAVEN_INSTALL_STRICT_TASK = new MavenTask()
-    .description("Maven: Code Style Check")
+    .description("Code Analysis")
     .goal("clean install -Dcheck=strict")
     .jdk("JDK 1.8")
     .executableLabel("Maven 3")
     .hasTests(true)
+    .workingSubdirectory(RepositoryConstants.HARVESTER_WORKING_DIR)
     .useMavenReturnCode(true);
 
 

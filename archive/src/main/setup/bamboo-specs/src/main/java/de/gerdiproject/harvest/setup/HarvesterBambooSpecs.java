@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import com.atlassian.bamboo.specs.api.BambooSpec;
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
-import com.atlassian.bamboo.specs.api.builders.applink.ApplicationLink;
 import com.atlassian.bamboo.specs.api.builders.repository.VcsChangeDetection;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepositoryViewer;
@@ -75,7 +74,7 @@ public class HarvesterBambooSpecs
         final BambooServer bambooServer = getBambooServer(adminUser);
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
-        final HarvesterCiPlan staticAnalysisPlan = new HarvesterCiPlan(repository, bambooKey, providerClassName);
+        final HarvesterPlan staticAnalysisPlan = new HarvesterPlan(repository, bambooKey, providerClassName);
         staticAnalysisPlan.publish(bambooServer, devEmails);
 
         final HarvesterDeployment deploymentProject = new HarvesterDeployment(repository, staticAnalysisPlan.getIdentifier(), providerClassName);
@@ -109,14 +108,11 @@ public class HarvesterBambooSpecs
         return new BitbucketServerRepository()
                .name(String.format(RepositoryConstants.BITBUCKET_HARVESTER_NAME, providerClassName))
                .repositoryViewer(new BitbucketServerRepositoryViewer())
-               .server(new ApplicationLink()
-                       .name(RepositoryConstants.BITBUCKET)
-                       .id(RepositoryConstants.BITBUCKET_ID))
+               .server(RepositoryConstants.BITBUCKET_SERVER)
                .projectKey(RepositoryConstants.BITBUCKET_HARVESTER_PROJECT)
                .repositorySlug(repositorySlug)
                .branch(RepositoryConstants.GIT_MASTER_BRANCH)
-               .shallowClonesEnabled(true)
                .remoteAgentCacheEnabled(false)
-               .changeDetection(new VcsChangeDetection());
+               .changeDetection(new VcsChangeDetection().quietPeriodEnabled(true));
     }
 }

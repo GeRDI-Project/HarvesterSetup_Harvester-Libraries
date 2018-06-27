@@ -26,9 +26,8 @@ import com.atlassian.bamboo.specs.api.builders.plan.Job;
 import com.atlassian.bamboo.specs.api.builders.plan.Plan;
 import com.atlassian.bamboo.specs.api.builders.plan.PlanIdentifier;
 import com.atlassian.bamboo.specs.api.builders.plan.Stage;
-import com.atlassian.bamboo.specs.api.builders.plan.branches.BranchCleanup;
-import com.atlassian.bamboo.specs.api.builders.plan.branches.PlanBranchManagement;
 import com.atlassian.bamboo.specs.api.builders.plan.configuration.ConcurrentBuilds;
+import com.atlassian.bamboo.specs.api.builders.trigger.RepositoryBasedTrigger.TriggeringRepositoriesType;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.trigger.BitbucketServerTrigger;
 import com.atlassian.bamboo.specs.util.BambooServer;
@@ -43,19 +42,19 @@ import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
  *
  * @author Robin Weiss
  */
-public class HarvesterCiPlan extends Plan
+public class HarvesterPlan extends Plan
 {
     /**
      * Creates a code analysis plan for the harvester service.
      *
-     * @param repository the repository that is linked to the plan
+     * @param harvesterRepository the repository that is linked to the plan
      * @param bambooKey the bamboo key of the plan
      * @param providerClassName the name of the provider in camel case
      *
      * @return a code analysis plan for the harvester service
      */
     @SuppressWarnings("unchecked")
-    public HarvesterCiPlan(BitbucketServerRepository repository, BambooKey bambooKey, String providerClassName)
+    public HarvesterPlan(BitbucketServerRepository harvesterRepository, BambooKey bambooKey, String providerClassName)
     {
         // set up plan
         super(
@@ -63,9 +62,16 @@ public class HarvesterCiPlan extends Plan
             String.format(BambooConstants.ANALYSIS_PLAN_NAME, providerClassName),
             bambooKey);
         description(BambooConstants.ANALYSIS_PLAN_DESCRIPTION);
-        pluginConfigurations(new ConcurrentBuilds().useSystemWideDefault(false));
-        planRepositories(repository);
-        triggers(new BitbucketServerTrigger());
+        pluginConfigurations(
+            new ConcurrentBuilds()
+            .useSystemWideDefault(false)
+            .maximumNumberOfConcurrentBuilds(10));
+        planRepositories(
+            harvesterRepository,
+            RepositoryConstants.BAMBOO_SCRIPTS_REPOSITORY);
+        triggers(new BitbucketServerTrigger()
+                 .triggeringRepositoriesType(TriggeringRepositoriesType.SELECTED)
+                 .selectedTriggeringRepositories(harvesterRepository.getIdentifier()));
 
         // set up job
         final Job defaultJob = new Job(
@@ -73,12 +79,16 @@ public class HarvesterCiPlan extends Plan
             BambooConstants.DEFAULT_JOB_KEY);
 
         defaultJob.tasks(
-            RepositoryConstants.CHECKOUT_TASK,
-            MavenConstants.MAVEN_INSTALL_STRICT_TASK);
+            RepositoryConstants.CHECKOUT_HARVESTER_REPO_TASK,
+            RepositoryConstants.CHECKOUT_BAMBOO_SCRIPTS_REPO_TASK,
+            MavenConstants.MAVEN_INSTALL_STRICT_TASK,
+            BambooConstants.PREPARE_VERSION_VARIABLES_TASK,
+            BambooConstants.EXPORT_VERSION_VARIABLES_TASK);
 
         defaultJob.artifacts(
             ArtifactConstants.WAR_ARTIFACT,
             ArtifactConstants.DOCKERFILE_ARTIFACT,
+            ArtifactConstants.UTIL_SCRIPT_ARTIFACT,
             ArtifactConstants.SCRIPT_ARTIFACTS
         );
 
@@ -86,10 +96,7 @@ public class HarvesterCiPlan extends Plan
         stages(new Stage(BambooConstants.DEFAULT_JOB_STAGE).jobs(defaultJob));
 
         // auto-create plan branches, delete them after 1 day when the branch is removed in the repository
-        planBranchManagement(new PlanBranchManagement()
-                             .createForVcsBranch()
-                             .delete(new BranchCleanup().whenRemovedFromRepositoryAfterDays(1))
-                             .notificationForCommitters());
+        planBranchManagement(BambooConstants.REMOVE_PLAN_BRANCH_AFTER_ONE_DAY);
     }
 
 

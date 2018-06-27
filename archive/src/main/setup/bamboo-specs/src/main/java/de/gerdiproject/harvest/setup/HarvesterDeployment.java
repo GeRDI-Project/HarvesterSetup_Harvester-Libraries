@@ -39,13 +39,13 @@ public class HarvesterDeployment extends Deployment
     /**
      * Creates a harvester deployment project.
      *
-     * @param repository the repository that is linked to the plan
+     * @param harvesterRepository the repository that is linked to the plan
      * @param bambooKey the bamboo key of the plan
      * @param providerClassName the name of the provider in camel case
      *
      * @return a harvester deployment plan
      */
-    public HarvesterDeployment(BitbucketServerRepository repository, PlanIdentifier sourcePlanIdentifier, String providerClassName)
+    public HarvesterDeployment(BitbucketServerRepository harvesterRepository, PlanIdentifier sourcePlanIdentifier, String providerClassName)
     {
         super(sourcePlanIdentifier, String.format(BambooConstants.DEPLOYMENT_PROJECT_NAME, providerClassName));
         description(BambooConstants.DEPLOYMENT_PROJECT_DESCRIPTION);
