@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.atlassian.bamboo.specs.api.BambooSpec;
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
+import com.atlassian.bamboo.specs.api.builders.plan.PlanIdentifier;
 import com.atlassian.bamboo.specs.api.builders.repository.VcsChangeDetection;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepositoryViewer;
@@ -74,10 +75,8 @@ public class HarvesterBambooSpecs
         final BambooServer bambooServer = getBambooServer(adminUser);
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
-        final HarvesterPlan staticAnalysisPlan = new HarvesterPlan(repository, bambooKey, providerClassName);
-        staticAnalysisPlan.publish(bambooServer, devEmails);
-
-        final HarvesterDeployment deploymentProject = new HarvesterDeployment(repository, staticAnalysisPlan.getIdentifier(), providerClassName);
+        final PlanIdentifier staticAnalysisPlanId = new PlanIdentifier(BambooConstants.HARVESTER_ABBREVIATION, bambooKey.toString());
+        final HarvesterDeployment deploymentProject = new HarvesterDeployment(repository, staticAnalysisPlanId, providerClassName);
         deploymentProject.publish(bambooServer, devEmails);
     }
 
