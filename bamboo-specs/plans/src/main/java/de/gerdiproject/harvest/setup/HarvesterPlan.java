@@ -61,7 +61,7 @@ public class HarvesterPlan extends Plan
             BambooConstants.ANALYSIS_PROJECT,
             String.format(BambooConstants.ANALYSIS_PLAN_NAME, providerClassName),
             bambooKey);
-        description(BambooConstants.ANALYSIS_PLAN_DESCRIPTION);
+        description(String.format(BambooConstants.ANALYSIS_PLAN_DESCRIPTION, providerClassName));
         pluginConfigurations(
             new ConcurrentBuilds()
             .useSystemWideDefault(false)

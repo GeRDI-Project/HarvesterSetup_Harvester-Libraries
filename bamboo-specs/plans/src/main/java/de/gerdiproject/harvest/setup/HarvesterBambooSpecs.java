@@ -54,16 +54,15 @@ public class HarvesterBambooSpecs
     public static void main(String[] args)
     {
         final UserPasswordCredentials adminUser = new SimpleUserPasswordCredentials(args[0], args[1]);
+        final String providerClassName = args[2];
+        final String project = args[3];
+        final String repositorySlug =  args[4];
 
-        final ProjectUtils utils = new ProjectUtils();
-
-        final String providerClassName = utils.getProviderClassName();
         LOGGER.info(LoggingConstants.PROVIDER_CLASS_NAME + providerClassName);
-
-        final String repositorySlug = utils.getRepositorySlug();
         LOGGER.info(LoggingConstants.REPOSITORY_SLUG + repositorySlug);
 
-        final BambooKey bambooKey = utils.createBambooKey(providerClassName);
+        final ProjectUtils utils = new ProjectUtils();
+        final BambooKey bambooKey = utils.createBambooKey(providerClassName, project);
         LOGGER.info(LoggingConstants.BAMBOO_KEY + bambooKey);
 
         final List<String> devEmails = utils.getDeveloperEmailAddresses();

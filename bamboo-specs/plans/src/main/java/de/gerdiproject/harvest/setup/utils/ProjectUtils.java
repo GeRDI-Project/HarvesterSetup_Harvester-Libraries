@@ -16,13 +16,10 @@
 package de.gerdiproject.harvest.setup.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,9 +31,9 @@ import com.atlassian.bamboo.specs.api.builders.BambooKey;
 
 import de.gerdiproject.harvest.setup.HarvesterBambooSpecs;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
-import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
 import de.gerdiproject.harvest.setup.constants.LoggingConstants;
 import de.gerdiproject.harvest.setup.constants.MavenConstants;
+import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
 
 
 /**
@@ -68,7 +65,8 @@ public class ProjectUtils
      */
     public String getProviderClassName()
     {
-        String providerClassName = null;
+        return System.getenv("testvar");
+        /*String providerClassName = null;
         File harvesterDir = new File(String.format(BambooConstants.MAIN_HARVESTER_PATH, projectRootDirectory));
 
         if (harvesterDir.exists() && harvesterDir.isDirectory()) {
@@ -111,7 +109,7 @@ public class ProjectUtils
             }
         }
 
-        return providerClassName;
+        return providerClassName;*/
     }
 
 
@@ -198,56 +196,17 @@ public class ProjectUtils
 
 
     /**
-     * Reads the .git/config file and looks for the BitBucket URL, extracting the repository slug.
-     *
-     * @return the repository slug of the project's GIT repository
-     */
-    public String getRepositorySlug()
-    {
-        String repositorySlug = null;
-
-        try {
-            // open config file
-            String gitConfigPath = String.format(RepositoryConstants.GIT_CONFIG_PATH, projectRootDirectory);
-            BufferedReader gitConfigReader = new BufferedReader(
-                new InputStreamReader(
-                    new FileInputStream(gitConfigPath),
-                    StandardCharsets.UTF_8));
-
-            // look for a git URL in the config file
-            String line = gitConfigReader.readLine();
-
-            while (line != null) {
-                Matcher lineMatcher = RepositoryConstants.REPOSITORY_SLUG_PATTERN.matcher(line);
-
-                if (lineMatcher.matches()) {
-                    repositorySlug = lineMatcher.group(1);
-                    break;
-                }
-
-                line = gitConfigReader.readLine();
-            }
-
-            gitConfigReader.close();
-        } catch (IOException e) {
-            // nothing to do here
-        }
-
-        return repositorySlug;
-    }
-
-
-    /**
      * Creates a Bamboo key by reading only the upper-case letters of the provider name and appending 'HAR'.
      *
      * @param providerClassName the name of the provider in camel case
+     * @param project the name of the Bitbucket project that is linked to the created jobs
      *
      * @return a Bamboo key for harvester plans
      */
-    public BambooKey createBambooKey(String providerClassName)
+    public BambooKey createBambooKey(String providerClassName, String project)
     {
         return new BambooKey(
                    providerClassName.replaceAll(BambooConstants.LOWER_CASE_REGEX, "")
-                   + BambooConstants.HARVESTER_ABBREVIATION);
+                   + project);
     }
 }

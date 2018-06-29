@@ -65,13 +65,12 @@ public class BambooConstants
     public static final String DEFAULT_JOB = "Default Job";
     public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
     public static final String DEFAULT_JOB_STAGE = "Default Stage";
-    public static final String HARVESTER_ABBREVIATION = "HAR";
     public static final String LOWER_CASE_REGEX = "[a-z]";
 
     public static final String PASSWORD_VARIABLE_KEY = "passwordGit";
 
     public static final String ANALYSIS_PLAN_NAME = "%s-Harvester Static Analysis";
-    public static final String ANALYSIS_PLAN_DESCRIPTION = "Static Analysis of the ${providerName} Harvester.";
+    public static final String ANALYSIS_PLAN_DESCRIPTION = "Static Analysis of the %s-Harvester.";
 
     public static final String DEPLOYMENT_PROJECT_NAME = "%s-Harvester";
     public static final String DEPLOYMENT_PROJECT_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
