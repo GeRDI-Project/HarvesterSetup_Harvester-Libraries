@@ -55,7 +55,7 @@ public class HarvesterBambooSpecs
     {
         final UserPasswordCredentials adminUser = new SimpleUserPasswordCredentials(args[0], args[1]);
         final String providerClassName = args[2];
-        final String project = args[3];
+        final String project = args[3].toUpperCase();
         final String repositorySlug = args[4];
         final List<String> devEmails = Arrays.asList(args[5].split(" "));
 
