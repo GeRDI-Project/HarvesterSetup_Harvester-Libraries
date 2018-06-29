@@ -34,7 +34,6 @@ import com.atlassian.bamboo.specs.util.BambooServer;
 
 import de.gerdiproject.harvest.setup.constants.ArtifactConstants;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
-import de.gerdiproject.harvest.setup.constants.MavenConstants;
 import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
 
 /**
@@ -81,7 +80,7 @@ public class HarvesterPlan extends Plan
         defaultJob.tasks(
             RepositoryConstants.CHECKOUT_HARVESTER_REPO_TASK,
             RepositoryConstants.CHECKOUT_BAMBOO_SCRIPTS_REPO_TASK,
-            MavenConstants.MAVEN_INSTALL_STRICT_TASK,
+            BambooConstants.MAVEN_INSTALL_STRICT_TASK,
             BambooConstants.PREPARE_VERSION_VARIABLES_TASK,
             BambooConstants.EXPORT_VERSION_VARIABLES_TASK);
 

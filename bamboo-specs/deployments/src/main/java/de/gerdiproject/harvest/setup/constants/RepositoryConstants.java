@@ -15,18 +15,11 @@
  */
 package de.gerdiproject.harvest.setup.constants;
 
-import java.util.regex.Pattern;
-
 import com.atlassian.bamboo.specs.api.builders.applink.ApplicationLink;
-import com.atlassian.bamboo.specs.api.builders.plan.branches.BranchCleanup;
-import com.atlassian.bamboo.specs.api.builders.plan.branches.PlanBranchManagement;
 import com.atlassian.bamboo.specs.api.builders.repository.VcsChangeDetection;
 import com.atlassian.bamboo.specs.api.builders.repository.VcsRepository;
-import com.atlassian.bamboo.specs.api.builders.task.Task;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepositoryViewer;
-import com.atlassian.bamboo.specs.builders.task.CheckoutItem;
-import com.atlassian.bamboo.specs.builders.task.VcsCheckoutTask;
 
 
 
@@ -37,10 +30,6 @@ import com.atlassian.bamboo.specs.builders.task.VcsCheckoutTask;
  */
 public class RepositoryConstants
 {
-    public static final Pattern REPOSITORY_SLUG_PATTERN = Pattern.compile("\\s*url\\s?=[\\d\\D]+?/([^/]+?).git");
-
-    public static final String GIT_CONFIG_PATH = "%s/.git/config";
-    public static final String GIT_GET_ROOT_COMMAND = "git rev-parse --show-toplevel";
     public static final String GIT_MASTER_BRANCH = "master";
 
     public static final String BITBUCKET_HARVESTER_NAME = "%s-Harvester";
@@ -53,13 +42,6 @@ public class RepositoryConstants
 
     public static final String BITBUCKET_HARVESTER_PROJECT = "HAR";
 
-
-    // Branch Management
-    public static final PlanBranchManagement MANUAL_BRANCH_MANAGEMENT  = new PlanBranchManagement()
-    .delete(new BranchCleanup())
-    .notificationForCommitters();
-
-
     // Repositories
     public static final VcsRepository<?, ?> BAMBOO_SCRIPTS_REPOSITORY = new BitbucketServerRepository()
     .name("BambooScripts")
@@ -69,20 +51,6 @@ public class RepositoryConstants
     .repositorySlug("bamboo-scripts")
     .branch(RepositoryConstants.GIT_MASTER_BRANCH)
     .changeDetection(new VcsChangeDetection());
-
-
-    // Tasks
-    public static final Task<?, ?> CHECKOUT_HARVESTER_REPO_TASK = new VcsCheckoutTask()
-    .description("Checkout Harvester")
-    .checkoutItems(new CheckoutItem()
-                   .defaultRepository()
-                   .path(HARVESTER_WORKING_DIR));
-
-    public static final Task<?, ?> CHECKOUT_BAMBOO_SCRIPTS_REPO_TASK = new VcsCheckoutTask()
-    .description("Checkout Bamboo Scripts")
-    .checkoutItems(new CheckoutItem()
-                   .repository(BAMBOO_SCRIPTS_REPOSITORY.getIdentifier())
-                   .path(BAMBOO_SCRIPTS_WORKING_DIR));
 
 
     /**

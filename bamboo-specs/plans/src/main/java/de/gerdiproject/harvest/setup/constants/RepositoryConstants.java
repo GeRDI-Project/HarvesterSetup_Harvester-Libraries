@@ -15,11 +15,7 @@
  */
 package de.gerdiproject.harvest.setup.constants;
 
-import java.util.regex.Pattern;
-
 import com.atlassian.bamboo.specs.api.builders.applink.ApplicationLink;
-import com.atlassian.bamboo.specs.api.builders.plan.branches.BranchCleanup;
-import com.atlassian.bamboo.specs.api.builders.plan.branches.PlanBranchManagement;
 import com.atlassian.bamboo.specs.api.builders.repository.VcsChangeDetection;
 import com.atlassian.bamboo.specs.api.builders.repository.VcsRepository;
 import com.atlassian.bamboo.specs.api.builders.task.Task;
@@ -37,10 +33,6 @@ import com.atlassian.bamboo.specs.builders.task.VcsCheckoutTask;
  */
 public class RepositoryConstants
 {
-    public static final Pattern REPOSITORY_SLUG_PATTERN = Pattern.compile("\\s*url\\s?=[\\d\\D]+?/([^/]+?).git");
-
-    public static final String GIT_CONFIG_PATH = "%s/.git/config";
-    public static final String GIT_GET_ROOT_COMMAND = "git rev-parse --show-toplevel";
     public static final String GIT_MASTER_BRANCH = "master";
 
     public static final String BITBUCKET_HARVESTER_NAME = "%s-Harvester";
@@ -52,13 +44,6 @@ public class RepositoryConstants
     .id("f0c4a002-9d93-3ac9-b18b-296394ec3180");
 
     public static final String BITBUCKET_HARVESTER_PROJECT = "HAR";
-
-
-    // Branch Management
-    public static final PlanBranchManagement MANUAL_BRANCH_MANAGEMENT  = new PlanBranchManagement()
-    .delete(new BranchCleanup())
-    .notificationForCommitters();
-
 
     // Repositories
     public static final VcsRepository<?, ?> BAMBOO_SCRIPTS_REPOSITORY = new BitbucketServerRepository()

@@ -16,9 +16,6 @@
 package de.gerdiproject.harvest.setup.constants;
 
 import com.atlassian.bamboo.specs.api.builders.plan.artifact.Artifact;
-import com.atlassian.bamboo.specs.api.builders.task.Task;
-import com.atlassian.bamboo.specs.builders.task.ArtifactDownloaderTask;
-import com.atlassian.bamboo.specs.builders.task.DownloadItem;
 
 
 
@@ -56,14 +53,6 @@ public class ArtifactConstants
     .copyPattern(SCRIPTS_PATTERN)
     .location(RepositoryConstants.HARVESTER_WORKING_DIR)
     .shared(true);
-
-
-    // Tasks
-    public static final Task<?, ?> DOWNLOAD_ALL_TASK = new ArtifactDownloaderTask()
-    .description("Download Artifacts")
-    .artifacts(new DownloadItem()
-               .allArtifacts(true));
-
 
     /**
      * Private Constructor, because this is a static class.

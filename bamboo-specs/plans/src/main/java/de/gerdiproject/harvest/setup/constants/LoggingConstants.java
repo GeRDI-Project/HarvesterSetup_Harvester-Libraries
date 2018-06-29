@@ -27,7 +27,6 @@ public class LoggingConstants
     public static final String PROVIDER_CLASS_NAME = "ProviderClassName: ";
     public static final String REPOSITORY_SLUG = "RepositorySlug: ";
     public static final String BAMBOO_KEY = "BambooKey: ";
-    public static final String PROJECT_ROOT_DIR = "ProjectDirectory: ";
     public static final String DEVELOPER_EMAILS = "DeveloperEmails:";
     public static final String CONNECTING_TO_SERVER = "Connecting to Bamboo Server: %s";
 

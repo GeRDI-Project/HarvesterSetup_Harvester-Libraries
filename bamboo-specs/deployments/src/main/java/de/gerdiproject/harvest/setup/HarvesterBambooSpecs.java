@@ -74,7 +74,7 @@ public class HarvesterBambooSpecs
         final BambooServer bambooServer = getBambooServer(adminUser);
         BitbucketServerRepository repository = createRepository(providerClassName, repositorySlug);
 
-        final PlanIdentifier staticAnalysisPlanId = new PlanIdentifier(project, bambooKey.toString());
+        final PlanIdentifier staticAnalysisPlanId = new PlanIdentifier(BambooConstants.ANALYSIS_PROJECT_KEY, bambooKey.toString());
         final HarvesterDeployment deploymentProject = new HarvesterDeployment(repository, staticAnalysisPlanId, providerClassName);
         deploymentProject.publish(bambooServer, devEmails);
     }
