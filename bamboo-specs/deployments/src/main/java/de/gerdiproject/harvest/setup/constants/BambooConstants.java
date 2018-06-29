@@ -101,8 +101,7 @@ public class BambooConstants
            DOWNLOAD_ALL_TASK,
            DOCKER_PUSH_TASK,
            BITBUCKET_TAG_TASK)
-    .triggers(new AfterSuccessfulBuildPlanTrigger()
-              .triggerByBranch("master"));
+    .triggers(new AfterSuccessfulBuildPlanTrigger());
 
     /**
      * Private Constructor, because this is a static class.
