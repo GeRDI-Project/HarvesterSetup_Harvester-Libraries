@@ -15,6 +15,7 @@
  */
 package de.gerdiproject.harvest.setup;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,7 +33,6 @@ import com.atlassian.bamboo.specs.util.UserPasswordCredentials;
 import de.gerdiproject.harvest.setup.constants.BambooConstants;
 import de.gerdiproject.harvest.setup.constants.LoggingConstants;
 import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
-import de.gerdiproject.harvest.setup.utils.ProjectUtils;
 
 /**
  * A static collection of Bamboo Specs methods that are used to create a plans
@@ -55,17 +55,17 @@ public class HarvesterBambooSpecs
     {
         final UserPasswordCredentials adminUser = new SimpleUserPasswordCredentials(args[0], args[1]);
         final String providerClassName = args[2];
-        final String project = args[3].toUpperCase();
-        final String repositorySlug =  args[4];
+        final String project = args[3];
+        final String repositorySlug = args[4];
+        final List<String> devEmails = Arrays.asList(args[5].split(" "));
 
         LOGGER.info(LoggingConstants.PROVIDER_CLASS_NAME + providerClassName);
         LOGGER.info(LoggingConstants.REPOSITORY_SLUG + repositorySlug);
 
-        final ProjectUtils utils = new ProjectUtils();
-        final BambooKey bambooKey = utils.createBambooKey(providerClassName, project);
+        final BambooKey bambooKey = new BambooKey(
+            providerClassName.replaceAll(BambooConstants.LOWER_CASE_REGEX, "") + project);
         LOGGER.info(LoggingConstants.BAMBOO_KEY + bambooKey);
 
-        final List<String> devEmails = utils.getDeveloperEmailAddresses();
         final StringBuilder sb = new StringBuilder(LoggingConstants.DEVELOPER_EMAILS);
         devEmails.forEach((String email) -> sb.append(' ').append(email));
         LOGGER.info(sb.toString());
