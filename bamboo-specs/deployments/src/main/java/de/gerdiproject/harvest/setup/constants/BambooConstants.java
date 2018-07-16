@@ -25,9 +25,6 @@ import com.atlassian.bamboo.specs.builders.task.ScriptTask;
 import com.atlassian.bamboo.specs.builders.trigger.AfterSuccessfulBuildPlanTrigger;
 import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 
-
-
-
 /**
  * A static collection of Bamboo Specs constants that are used to create Plans
  * and Deployment Projects on the GeRDI Bamboo.
@@ -47,7 +44,7 @@ public class BambooConstants
 
     public static final String DEPLOYMENT_PROJECT_NAME = "%s-Harvester";
     public static final String DEPLOYMENT_PROJECT_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
-    
+
     public static final ReleaseNaming DEPLOYMENT_RELEASE_NAMING =
         new ReleaseNaming(TAG_VERSION_VARIABLE)
     .applicableToBranches(true)
@@ -59,10 +56,10 @@ public class BambooConstants
 
     // Tasks
     public static final Task<?, ?> DOWNLOAD_ALL_TASK = new ArtifactDownloaderTask()
-            .description("Download Artifacts")
-            .artifacts(new DownloadItem()
-                       .allArtifacts(true));
-    
+    .description("Download Artifacts")
+    .artifacts(new DownloadItem()
+               .allArtifacts(true));
+
     public static final Task<?, ?> DOCKER_PUSH_TASK = new ScriptTask()
     .location(ScriptTaskProperties.Location.FILE)
     .description("Docker Push")

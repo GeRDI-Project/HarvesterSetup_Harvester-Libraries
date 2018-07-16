@@ -21,8 +21,6 @@ import com.atlassian.bamboo.specs.api.builders.repository.VcsRepository;
 import com.atlassian.bamboo.specs.builders.repository.bitbucket.server.BitbucketServerRepository;
 import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepositoryViewer;
 
-
-
 /**
  * A static collection of Bamboo Specs constants that concern repositories and Bitbucket.
  *

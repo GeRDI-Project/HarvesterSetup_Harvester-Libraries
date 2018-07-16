@@ -15,8 +15,6 @@
  */
 package de.gerdiproject.harvest.setup.constants;
 
-
-
 /**
  * A static collection of constants for logging purposes.
  *

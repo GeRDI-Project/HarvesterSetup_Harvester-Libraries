@@ -17,8 +17,6 @@ package de.gerdiproject.harvest.setup.constants;
 
 import com.atlassian.bamboo.specs.api.builders.plan.artifact.Artifact;
 
-
-
 /**
  * A static collection of Bamboo Specs constants that are used to create and share
  * artifacts.
@@ -28,7 +26,6 @@ import com.atlassian.bamboo.specs.api.builders.plan.artifact.Artifact;
 public class ArtifactConstants
 {
     private static final String SCRIPTS_PATTERN = RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/**/*";
-
 
     // Plan Definitions
     public static final Artifact WAR_ARTIFACT = new Artifact()
@@ -53,6 +50,7 @@ public class ArtifactConstants
     .copyPattern(SCRIPTS_PATTERN)
     .location(RepositoryConstants.HARVESTER_WORKING_DIR)
     .shared(true);
+
 
     /**
      * Private Constructor, because this is a static class.

@@ -27,9 +27,6 @@ import com.atlassian.bamboo.specs.builders.task.ScriptTask;
 import com.atlassian.bamboo.specs.model.task.InjectVariablesScope;
 import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
 
-
-
-
 /**
  * A static collection of Bamboo Specs constants that are used to create Plans
  * and Deployment Projects on the GeRDI Bamboo.
@@ -38,7 +35,7 @@ import com.atlassian.bamboo.specs.model.task.ScriptTaskProperties;
  */
 public class BambooConstants
 {
-    // Variabl Injection
+    // Variable Injection
     public static final String VERSION_VARIABLE_FILE = "injectedVersions.ini";
     public static final String VARIABLE_INJECTION_NAMESPACE = "inject";
 
@@ -52,7 +49,7 @@ public class BambooConstants
     // Generic Bamboo Text
     public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
 
-    public static final String DEFAULT_JOB = "Default Job";
+    public static final String DEFAULT_JOB = "Static Analysis Job";
     public static final BambooKey DEFAULT_JOB_KEY = new BambooKey("JOB1");
     public static final String DEFAULT_JOB_STAGE = "Default Stage";
     public static final String LOWER_CASE_REGEX = "[a-z]";
@@ -65,7 +62,6 @@ public class BambooConstants
     .oid(new BambooOid("tfn4xj9wxfcx"))
     .key(new BambooKey("CA"))
     .name("Code Analysis");
-
 
     // Tasks
     public static final Task<?, ?> PREPARE_VERSION_VARIABLES_TASK = new ScriptTask()
@@ -91,6 +87,7 @@ public class BambooConstants
     .hasTests(true)
     .workingSubdirectory(RepositoryConstants.HARVESTER_WORKING_DIR)
     .useMavenReturnCode(true);
+
 
     /**
      * Private Constructor, because this is a static class.

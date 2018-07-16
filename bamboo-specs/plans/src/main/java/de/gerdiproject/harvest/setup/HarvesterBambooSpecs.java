@@ -43,7 +43,7 @@ import de.gerdiproject.harvest.setup.constants.RepositoryConstants;
 @BambooSpec
 public class HarvesterBambooSpecs
 {
-    private static Logger LOGGER = LoggerFactory.getLogger(HarvesterBambooSpecs.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HarvesterBambooSpecs.class);
 
 
     /**

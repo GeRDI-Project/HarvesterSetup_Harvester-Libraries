@@ -24,8 +24,6 @@ import com.atlassian.bamboo.specs.builders.repository.viewer.BitbucketServerRepo
 import com.atlassian.bamboo.specs.builders.task.CheckoutItem;
 import com.atlassian.bamboo.specs.builders.task.VcsCheckoutTask;
 
-
-
 /**
  * A static collection of Bamboo Specs constants that concern repositories and Bitbucket.
  *
@@ -54,7 +52,6 @@ public class RepositoryConstants
     .repositorySlug("bamboo-scripts")
     .branch(RepositoryConstants.GIT_MASTER_BRANCH)
     .changeDetection(new VcsChangeDetection());
-
 
     // Tasks
     public static final Task<?, ?> CHECKOUT_HARVESTER_REPO_TASK = new VcsCheckoutTask()
