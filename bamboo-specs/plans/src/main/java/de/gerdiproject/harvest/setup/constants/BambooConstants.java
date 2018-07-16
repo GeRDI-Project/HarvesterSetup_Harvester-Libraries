@@ -16,7 +16,6 @@
 package de.gerdiproject.harvest.setup.constants;
 
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
-import com.atlassian.bamboo.specs.api.builders.BambooOid;
 import com.atlassian.bamboo.specs.api.builders.plan.branches.BranchCleanup;
 import com.atlassian.bamboo.specs.api.builders.plan.branches.PlanBranchManagement;
 import com.atlassian.bamboo.specs.api.builders.project.Project;
@@ -58,10 +57,7 @@ public class BambooConstants
     public static final String ANALYSIS_PLAN_DESCRIPTION = "Static Analysis of the %s-Harvester.";
 
     // Projects
-    public static final Project ANALYSIS_PROJECT = new Project()
-    .oid(new BambooOid("tfn4xj9wxfcx"))
-    .key(new BambooKey("CA"))
-    .name("Code Analysis");
+    public static final Project ANALYSIS_PROJECT = new Project().key(new BambooKey("CA"));
 
     // Tasks
     public static final Task<?, ?> PREPARE_VERSION_VARIABLES_TASK = new ScriptTask()
