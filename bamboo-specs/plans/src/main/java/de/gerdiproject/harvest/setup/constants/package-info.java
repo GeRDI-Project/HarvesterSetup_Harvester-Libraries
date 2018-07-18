@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 /**
- * This package contains utility classes for preparing BambooSpecs data.
+ * This package contains static classes of constants concerning
+ * the BambooSpecs and the usage thereof.
  *
  * @author Robin Weiss
  */
-package de.gerdiproject.harvest.setup.utils;
+package de.gerdiproject.harvest.setup.constants;

@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.gerdiproject.harvest.setup.utils;
-
-import java.io.File;
-import java.io.FilenameFilter;
-
-import de.gerdiproject.harvest.setup.constants.BambooConstants;
-
+package de.gerdiproject.harvest.setup.constants;
 
 /**
- * A file name filter that checks if the file names end with "Harvester.java".
+ * A static collection of constants for logging purposes.
  *
  * @author Robin Weiss
  */
-public class HarvesterFilenameFilter implements FilenameFilter
+public class LoggingConstants
 {
-    @Override
-    public boolean accept(File file, String fileName)
+    public static final String PROVIDER_CLASS_NAME = "ProviderClassName: ";
+    public static final String REPOSITORY_SLUG = "RepositorySlug: ";
+    public static final String BAMBOO_KEY = "BambooKey: ";
+    public static final String DEVELOPER_EMAILS = "DeveloperEmails:";
+    public static final String CONNECTING_TO_SERVER = "Connecting to Bamboo Server: %s";
+
+
+    /**
+     * Private Constructor, because this is a static class.
+     */
+    private LoggingConstants()
     {
-        return BambooConstants.HARVESTER_FILE_PATTERN.matcher(fileName).matches();
+
     }
 }
