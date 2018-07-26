@@ -90,7 +90,7 @@ public class BambooConstants
     .triggers(new AfterSuccessfulBuildPlanTrigger()
               .triggerByBranch("production"));
 
-    public static final String STAGE_ENVIRONMENT_NAME = "Stage";
+    public static final String STAGE_ENVIRONMENT_NAME = "Staging";
     public static final Environment STAGE_ENVIRONMENT = new Environment(STAGE_ENVIRONMENT_NAME)
     .tasks(new CleanWorkingDirectoryTask(),
            DOWNLOAD_ALL_TASK,
