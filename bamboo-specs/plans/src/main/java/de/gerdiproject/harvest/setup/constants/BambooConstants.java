@@ -84,6 +84,12 @@ public class BambooConstants
     .workingSubdirectory(RepositoryConstants.HARVESTER_WORKING_DIR)
     .useMavenReturnCode(true);
 
+    public static final Task<?, ?> CHECK_MAVEN_SNAPSHOTS_TASK = new ScriptTask()
+    .description("Check Snapshot Versions")
+    .location(ScriptTaskProperties.Location.FILE)
+    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/plans/codeAnalysis/fail-if-has-snapshots.sh")
+    .argument("\"" + RepositoryConstants.HARVESTER_WORKING_DIR + "/pom.xml\"");
+
 
     /**
      * Private Constructor, because this is a static class.
