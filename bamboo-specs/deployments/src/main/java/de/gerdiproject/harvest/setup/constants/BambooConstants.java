@@ -67,6 +67,12 @@ public class BambooConstants
     .description("Create and add an image to the Docker registry")
     .argument("\"<maven>\" \"" + TAG_VERSION_VARIABLE + "\" \"<gerdi>\"");
 
+    public static final Task<?, ?> DEPLOY_YAML_TASK = new ScriptTask()
+    .location(ScriptTaskProperties.Location.FILE)
+    .description("Deploy Kubernetes YAML")
+    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/deployment/create-k8s-yaml/create-k8s-yaml.sh")
+    .argument("\"" + TAG_VERSION_VARIABLE + "\" \"10.222.21.10\" \"10.222.21.50\"");
+
     public static final Task<?, ?> BITBUCKET_TAG_TASK = new ScriptTask()
     .description("Tag Git Repository")
     .location(ScriptTaskProperties.Location.FILE)
@@ -79,15 +85,17 @@ public class BambooConstants
     .tasks(new CleanWorkingDirectoryTask(),
            DOWNLOAD_ALL_TASK,
            DOCKER_PUSH_TASK,
+           DEPLOY_YAML_TASK,
            BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger()
               .triggerByBranch("production"));
 
-    public static final String STAGE_ENVIRONMENT_NAME = "Stage";
+    public static final String STAGE_ENVIRONMENT_NAME = "Staging";
     public static final Environment STAGE_ENVIRONMENT = new Environment(STAGE_ENVIRONMENT_NAME)
     .tasks(new CleanWorkingDirectoryTask(),
            DOWNLOAD_ALL_TASK,
            DOCKER_PUSH_TASK,
+           DEPLOY_YAML_TASK,
            BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger()
               .triggerByBranch("stage"));
@@ -97,6 +105,7 @@ public class BambooConstants
     .tasks(new CleanWorkingDirectoryTask(),
            DOWNLOAD_ALL_TASK,
            DOCKER_PUSH_TASK,
+           DEPLOY_YAML_TASK,
            BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger());
 
