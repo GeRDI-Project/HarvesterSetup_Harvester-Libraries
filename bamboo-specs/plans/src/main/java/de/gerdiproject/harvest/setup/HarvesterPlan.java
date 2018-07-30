@@ -81,6 +81,7 @@ public class HarvesterPlan extends Plan
             RepositoryConstants.CHECKOUT_HARVESTER_REPO_TASK,
             RepositoryConstants.CHECKOUT_BAMBOO_SCRIPTS_REPO_TASK,
             BambooConstants.MAVEN_INSTALL_STRICT_TASK,
+            BambooConstants.CHECK_MAVEN_SNAPSHOTS_TASK,
             BambooConstants.PREPARE_VERSION_VARIABLES_TASK,
             BambooConstants.EXPORT_VERSION_VARIABLES_TASK);
 
