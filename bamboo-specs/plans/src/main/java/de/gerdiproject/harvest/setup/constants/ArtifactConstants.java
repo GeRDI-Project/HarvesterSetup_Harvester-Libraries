@@ -44,13 +44,7 @@ public class ArtifactConstants
     .name("scripts")
     .copyPattern(SCRIPTS_PATTERN)
     .shared(true);
-
-    public static final Artifact UTIL_SCRIPT_ARTIFACT = new Artifact()
-    .name("harvesterUtilsScripts")
-    .copyPattern(SCRIPTS_PATTERN)
-    .location(RepositoryConstants.HARVESTER_WORKING_DIR)
-    .shared(true);
-
+    
 
     /**
      * Private Constructor, because this is a static class.
