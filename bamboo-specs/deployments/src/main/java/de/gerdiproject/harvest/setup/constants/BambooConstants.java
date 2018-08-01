@@ -63,9 +63,9 @@ public class BambooConstants
     public static final Task<?, ?> DOCKER_PUSH_TASK = new ScriptTask()
     .location(ScriptTaskProperties.Location.FILE)
     .description("Docker Push")
-    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/docker-push.sh")
+    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/deployment/docker/push-to-docker-registry.sh")
     .description("Create and add an image to the Docker registry")
-    .argument("\"<maven>\" \"" + TAG_VERSION_VARIABLE + "\" \"<gerdi>\"");
+    .argument("\"" + TAG_VERSION_VARIABLE + "\"");
 
     public static final Task<?, ?> DEPLOY_YAML_TASK = new ScriptTask()
     .location(ScriptTaskProperties.Location.FILE)

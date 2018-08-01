@@ -88,7 +88,6 @@ public class HarvesterPlan extends Plan
         defaultJob.artifacts(
             ArtifactConstants.WAR_ARTIFACT,
             ArtifactConstants.DOCKERFILE_ARTIFACT,
-            ArtifactConstants.UTIL_SCRIPT_ARTIFACT,
             ArtifactConstants.SCRIPT_ARTIFACTS
         );
 
