@@ -67,11 +67,16 @@ public class BambooConstants
     .description("Create and add an image to the Docker registry")
     .argument("\"" + TAG_VERSION_VARIABLE + "\"");
 
-    public static final Task<?, ?> DEPLOY_YAML_TASK = new ScriptTask()
+    public static final Task<?, ?> COMMIT_YAML_TASK = new ScriptTask()
     .location(ScriptTaskProperties.Location.FILE)
     .description("Deploy Kubernetes YAML")
-    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/deployment/create-k8s-yaml/create-k8s-yaml.sh")
-    .argument("\"" + TAG_VERSION_VARIABLE + "\" \"10.222.21.10\" \"10.222.21.50\"");
+    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/deployment/k8s/create-k8s-yaml.sh")
+    .argument("\"" + TAG_VERSION_VARIABLE + "\" \"10.222.21.11\" \"10.222.21.50\"");
+
+    public static final Task<?, ?> DEPLOY_SERVICE_TASK = new ScriptTask()
+    .location(ScriptTaskProperties.Location.FILE)
+    .description("Deploy Kubernetes Service")
+    .fileFromPath(RepositoryConstants.BAMBOO_SCRIPTS_WORKING_DIR + "/deployment/k8s/deploy-k8s-service.sh");
 
     public static final Task<?, ?> BITBUCKET_TAG_TASK = new ScriptTask()
     .description("Tag Git Repository")
@@ -85,7 +90,8 @@ public class BambooConstants
     .tasks(new CleanWorkingDirectoryTask(),
            DOWNLOAD_ALL_TASK,
            DOCKER_PUSH_TASK,
-           DEPLOY_YAML_TASK,
+           COMMIT_YAML_TASK,
+           DEPLOY_SERVICE_TASK,
            BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger()
               .triggerByBranch("production"));
@@ -95,7 +101,8 @@ public class BambooConstants
     .tasks(new CleanWorkingDirectoryTask(),
            DOWNLOAD_ALL_TASK,
            DOCKER_PUSH_TASK,
-           DEPLOY_YAML_TASK,
+           COMMIT_YAML_TASK,
+           DEPLOY_SERVICE_TASK,
            BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger()
               .triggerByBranch("stage"));
@@ -105,7 +112,8 @@ public class BambooConstants
     .tasks(new CleanWorkingDirectoryTask(),
            DOWNLOAD_ALL_TASK,
            DOCKER_PUSH_TASK,
-           DEPLOY_YAML_TASK,
+           COMMIT_YAML_TASK,
+           DEPLOY_SERVICE_TASK,
            BITBUCKET_TAG_TASK)
     .triggers(new AfterSuccessfulBuildPlanTrigger());
 
