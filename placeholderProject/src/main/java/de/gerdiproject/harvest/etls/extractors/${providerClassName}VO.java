@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.gerdiproject.harvest.harvester;
+package de.gerdiproject.harvest.etls.extractors;
 
-import de.gerdiproject.harvest.harvester.AbstractHarvester;
-
+import lombok.Data;
 
 /**
- * A harvester for ${providerName} (${providerUrl}).
+ * This class is a value object that contains all extracted elements from ${providerClassName}
+ * that are required to generate a document.
  *
  * @author ${authorFullName}
  */
-public class ${providerClassName}Harvester extends AbstractHarvester // TODO choose an AbstractHarvester implementation that suits your needs
+@Data
+public class ${providerClassName}VO
 {
-    /**
-     * Default Constructor that is called by the MainContext.
-     */
-    public ${providerClassName}Harvester()
-    {
-        super();
-        // TODO initialize final fields
-    }
+    // TODO add fields here, or replace this class with whatever suits your needs
 }

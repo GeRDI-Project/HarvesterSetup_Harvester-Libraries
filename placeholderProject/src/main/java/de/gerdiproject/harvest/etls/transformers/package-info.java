@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 /**
- * This package contains classes and packages that are related to the {@linkplain de.gerdiproject.harvest.harvester.${providerClassName}Harvester} and its sub-classes.
+ * This package contains {@linkplain de.gerdiproject.harvest.etls.transformers.ITransformer}s
+ * for converting ${providerClassName} metadata to {@linkplain de.gerdiproject.json.datacite.DataCiteJson}.
  *
  * @author ${authorFullName}
  */
-package de.gerdiproject.harvest.harvester;
+package de.gerdiproject.harvest.etls.transformers;
