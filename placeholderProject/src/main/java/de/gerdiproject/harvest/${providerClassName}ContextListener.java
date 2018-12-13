@@ -15,6 +15,9 @@
  */
 package de.gerdiproject.harvest;
 
+import java.util.Arrays;
+import java.util.List;
+
 import de.gerdiproject.harvest.application.ContextListener;
 import de.gerdiproject.harvest.etls.AbstractETL;
 import de.gerdiproject.harvest.etls.${providerClassName}ETL;

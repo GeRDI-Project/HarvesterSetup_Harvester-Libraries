@@ -15,12 +15,10 @@
  */
 package de.gerdiproject.harvest.etls.extractors;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 import de.gerdiproject.harvest.etls.AbstractETL;
 import de.gerdiproject.harvest.utils.data.HttpRequester;
-import de.gerdiproject.json.GsonUtils;
 
 /**
  * This {@linkplain AbstractIteratorExtractor} implementation extracts all
@@ -41,10 +39,7 @@ public class ${providerClassName}Extractor extends AbstractIteratorExtractor<${p
      */
     public ${providerClassName}Extractor()
     {
-        // TODO If you do not extract GeoJson, you can use new Gson() instead of using GsonUtils
-        this.httpRequester = new HttpRequester(
-                GsonUtils.createGeoJsonGsonBuilder().create(), 
-                StandardCharsets.UTF_8);
+        this.httpRequester = new HttpRequester();
     }
 
 

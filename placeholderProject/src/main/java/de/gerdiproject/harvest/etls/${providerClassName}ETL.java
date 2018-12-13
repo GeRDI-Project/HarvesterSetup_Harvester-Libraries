@@ -32,7 +32,7 @@ public class ${providerClassName}ETL extends StaticIteratorETL<${providerClassNa
     /**
      * Constructor
      */
-    public FaoStatETL()
+    public ${providerClassName}ETL()
     {
         super(new ${providerClassName}Extractor(), new ${providerClassName}Transformer());
     }
