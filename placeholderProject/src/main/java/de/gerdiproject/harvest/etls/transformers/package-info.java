@@ -15,7 +15,7 @@
  */
 /**
  * This package contains {@linkplain de.gerdiproject.harvest.etls.transformers.ITransformer}s
- * for converting ${providerClassName} metadata to {@linkplain de.gerdiproject.json.datacite.DataCiteJson}.
+ * for transforming ${providerName} metadata to {@linkplain de.gerdiproject.json.datacite.DataCiteJson} objects.
  *
  * @author ${authorFullName}
  */

@@ -23,7 +23,7 @@ import de.gerdiproject.json.datacite.DataCiteJson;
 
 /**
  * An ETL for harvesting ${providerName}.<br>
- * see ${providerUrl}.
+ * See: ${providerUrl}
  *
  * @author ${authorFullName}
  */

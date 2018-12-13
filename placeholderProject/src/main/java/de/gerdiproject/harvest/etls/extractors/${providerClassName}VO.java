@@ -18,8 +18,8 @@ package de.gerdiproject.harvest.etls.extractors;
 import lombok.Data;
 
 /**
- * This class is a value object that contains all extracted elements from ${providerClassName}
- * that are required to generate a document.
+ * This class is a value object that contains all extracted (meta-) data from 
+ * ${providerName} that is required to generate a document.
  *
  * @author ${authorFullName}
  */

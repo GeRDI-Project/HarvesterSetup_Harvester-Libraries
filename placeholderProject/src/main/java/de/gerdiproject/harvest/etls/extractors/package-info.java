@@ -15,7 +15,7 @@
  */
 /**
  * This package contains {@linkplain de.gerdiproject.harvest.etls.extractors.IExtractor}s
- * for retrieving ${providerClassName} metadata.
+ * for retrieving ${providerName} metadata.
  *
  * @author ${authorFullName}
  */

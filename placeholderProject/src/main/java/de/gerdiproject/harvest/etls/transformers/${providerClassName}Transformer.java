@@ -21,7 +21,7 @@ import de.gerdiproject.json.datacite.DataCiteJson;
 
 /**
  * This transformer parses metadata from a {@linkplain ${providerClassName}VO}
- * and adds it to documents.
+ * and creates {@linkplain DataCiteJson} objects from it.
  *
  * @author ${authorFullName}
  */

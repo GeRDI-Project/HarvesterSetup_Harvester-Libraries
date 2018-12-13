@@ -22,7 +22,7 @@ import de.gerdiproject.harvest.utils.data.HttpRequester;
 
 /**
  * This {@linkplain AbstractIteratorExtractor} implementation extracts all
- * (meta-)data from ${providerClassName} and bundles it into a {@linkplain ${providerClassName}VO}.
+ * (meta-)data from ${providerName} and bundles it into a {@linkplain ${providerClassName}VO}.
  *
  * @author ${authorFullName}
  */
