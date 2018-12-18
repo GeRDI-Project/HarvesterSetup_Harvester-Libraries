@@ -13,28 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.gerdiproject.harvest;
-
-import java.util.Arrays;
-import java.util.List;
-
-import de.gerdiproject.harvest.application.ContextListener;
-import de.gerdiproject.harvest.etls.AbstractETL;
-import de.gerdiproject.harvest.etls.${providerClassName}ETL;
-
-import javax.servlet.annotation.WebListener;
-
 /**
- * This class serves as an entry point for initializing the web service.
+ * This package contains classes and packages that are related to the 
+ * {@linkplain de.gerdiproject.harvest.etls.${providerClassName}ETL}.
  *
  * @author ${authorFullName}
  */
-@WebListener
-public class ${providerClassName}ContextListener extends ContextListener
-{
-	@Override
-    protected List<? extends AbstractETL<?, ?>> createETLs()
-    {
-        return Arrays.asList(new ${providerClassName}ETL());
-    }
-}
+package de.gerdiproject.harvest.etls;

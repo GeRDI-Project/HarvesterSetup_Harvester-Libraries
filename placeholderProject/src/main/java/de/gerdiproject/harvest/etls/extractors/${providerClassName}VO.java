@@ -13,28 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.gerdiproject.harvest;
+package de.gerdiproject.harvest.etls.extractors;
 
-import java.util.Arrays;
-import java.util.List;
-
-import de.gerdiproject.harvest.application.ContextListener;
-import de.gerdiproject.harvest.etls.AbstractETL;
-import de.gerdiproject.harvest.etls.${providerClassName}ETL;
-
-import javax.servlet.annotation.WebListener;
+import lombok.Data;
 
 /**
- * This class serves as an entry point for initializing the web service.
+ * This class is a value object that contains all extracted (meta-) data from 
+ * ${providerName} that is required to generate a document.
  *
  * @author ${authorFullName}
  */
-@WebListener
-public class ${providerClassName}ContextListener extends ContextListener
+@Data
+public class ${providerClassName}VO
 {
-	@Override
-    protected List<? extends AbstractETL<?, ?>> createETLs()
-    {
-        return Arrays.asList(new ${providerClassName}ETL());
-    }
+    // TODO add fields here, or replace this class with whatever suits your needs
 }

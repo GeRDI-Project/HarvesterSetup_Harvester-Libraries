@@ -42,7 +42,7 @@ public class BambooConstants
     public static final String BAMBOO_SERVER = "https://ci.gerdi-project.de";
     public static final String LOWER_CASE_REGEX = "[a-z]";
 
-    public static final String DEPLOYMENT_PROJECT_NAME = "%s-Harvester";
+    public static final String DEPLOYMENT_PROJECT_NAME = "Harvester - %s";
     public static final String DEPLOYMENT_PROJECT_DESCRIPTION = "Builds a Docker Image of the Harvester and registers it at the Docker Registry.";
 
     public static final ReleaseNaming DEPLOYMENT_RELEASE_NAMING =
