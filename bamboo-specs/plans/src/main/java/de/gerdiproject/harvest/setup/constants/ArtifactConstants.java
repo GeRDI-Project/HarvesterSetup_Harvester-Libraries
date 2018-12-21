@@ -44,7 +44,7 @@ public class ArtifactConstants
     .name("scripts")
     .copyPattern(SCRIPTS_PATTERN)
     .shared(true);
-
+    
 
     /**
      * Private Constructor, because this is a static class.

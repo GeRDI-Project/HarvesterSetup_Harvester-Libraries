@@ -109,7 +109,6 @@ public class HarvesterBambooSpecs
                .repositorySlug(repositorySlug)
                .branch(RepositoryConstants.GIT_MASTER_BRANCH)
                .remoteAgentCacheEnabled(false)
-               .fetchWholeRepository(true)
                .changeDetection(new VcsChangeDetection().quietPeriodEnabled(true));
     }
 }
