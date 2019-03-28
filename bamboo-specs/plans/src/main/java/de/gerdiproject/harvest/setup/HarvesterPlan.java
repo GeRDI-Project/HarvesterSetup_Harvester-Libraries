@@ -52,7 +52,6 @@ public class HarvesterPlan extends Plan
      *
      * @return a code analysis plan for the harvester service
      */
-    @SuppressWarnings("unchecked")
     public HarvesterPlan(BitbucketServerRepository harvesterRepository, BambooKey bambooKey, String providerClassName)
     {
         // set up plan
