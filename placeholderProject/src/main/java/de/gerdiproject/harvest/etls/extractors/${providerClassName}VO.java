@@ -15,7 +15,7 @@
  */
 package de.gerdiproject.harvest.etls.extractors;
 
-import lombok.Data;
+import lombok.Value;
 
 /**
  * This class is a value object that contains all extracted (meta-) data from 
@@ -23,8 +23,8 @@ import lombok.Data;
  *
  * @author ${authorFullName}
  */
-@Data
+@Value
 public class ${providerClassName}VO
 {
-    // TODO add fields here, or replace this class with whatever suits your needs
+    // TODO add fields here, or replace this class with whatever is extracted
 }
