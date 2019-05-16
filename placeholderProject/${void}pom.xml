@@ -5,8 +5,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>de.gerdi-project</groupId>
-		<artifactId>GeRDI-parent-harvester</artifactId>
-		<version>${parentHarvesterVersion}</version>
+		<artifactId>GeRDI-parent</artifactId>
+		<version>${parentPomVersion}</version>
 	</parent>
 	
 	<artifactId>${providerClassName}-HarvesterService</artifactId>
@@ -14,7 +14,19 @@
 	<name>${providerName} Harvester Service</name>
 	<description>This is a restful harvester for retrieving data from ${providerUrl}</description>
 	<inceptionYear>${creationYear}</inceptionYear>
-  
+	
+	<properties>
+		<restfulharvester.dependency.version>${harvesterLibraryVersion}</restfulharvester.dependency.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>de.gerdi-project</groupId>
+			<artifactId>RestfulHarvester-Library</artifactId>
+			<version>${restfulharvester.dependency.version}</version>
+		</dependency>
+	</dependencies>
+	
 	<developers>
 		<developer>
 			<name>${authorFullName}</name>
