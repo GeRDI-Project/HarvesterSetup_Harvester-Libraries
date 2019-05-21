@@ -55,8 +55,8 @@ public class ${providerClassName}Transformer extends AbstractIteratorTransformer
      */
     private String createIdentifier(${providerClassName}VO source)
     {
-        // TODO retrieve a unique identifier from the source
-        return source.toString();
+        // TODO retrieve a unique identifier from the source and remove exception
+		throw new UnsupportedOperationException();
     }
 
 

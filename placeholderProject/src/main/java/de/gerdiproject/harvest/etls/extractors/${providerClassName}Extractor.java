@@ -97,16 +97,16 @@ public class ${providerClassName}Extractor extends AbstractIteratorExtractor<${p
         @Override
         public boolean hasNext()
         {
-            // TODO implement
-            return false;
+            // TODO implement and remove exception
+			throw new UnsupportedOperationException();
         }
 
 
         @Override
         public ${providerClassName}VO next()
         {
-            // TODO implement
-            return null;
+            // TODO implement and remove exception
+			throw new UnsupportedOperationException();
         }
     }
 }
