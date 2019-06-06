@@ -28,12 +28,13 @@ import de.gerdiproject.harvest.utils.data.HttpRequester;
  */
 public class ${providerClassName}Extractor extends AbstractIteratorExtractor<${providerClassName}VO>
 {
-    private final HttpRequester httpRequester;
+    // protected fields that may be used by the inner iterator class
+    protected final HttpRequester httpRequester;
 
     private String version = null;
-    private int size = -1;
+    private int sourceDocumentCount = -1;
 
-    
+
     /**
      * Simple constructor.
      */
@@ -53,7 +54,7 @@ public class ${providerClassName}Extractor extends AbstractIteratorExtractor<${p
         // TODO if possible, extract some metadata in order to determine the size and a version string
         // final ${providerClassName}ETL specificEtl = (${providerClassName}ETL) etl;
         // this.version = ;
-        // this.size = ;
+        // this.sourceDocumentCount = ;
     }
 
 
@@ -68,15 +69,21 @@ public class ${providerClassName}Extractor extends AbstractIteratorExtractor<${p
     @Override
     public int size()
     {
-        return size;
+        return sourceDocumentCount;
     }
-
 
 
     @Override
     protected Iterator<${providerClassName}VO> extractAll() throws ExtractorException
     {
         return new ${providerClassName}Iterator();
+    }
+
+
+    @Override
+    public void clear()
+    {
+        // TODO close any open streams, if there are none, comment with "// nothing to clean up"
     }
 
 
@@ -90,16 +97,16 @@ public class ${providerClassName}Extractor extends AbstractIteratorExtractor<${p
         @Override
         public boolean hasNext()
         {
-            // TODO
-            return false;
+            // TODO implement and remove exception
+			throw new UnsupportedOperationException();
         }
 
 
         @Override
         public ${providerClassName}VO next()
         {
-            // TODO
-            return null;
+            // TODO implement and remove exception
+			throw new UnsupportedOperationException();
         }
     }
 }

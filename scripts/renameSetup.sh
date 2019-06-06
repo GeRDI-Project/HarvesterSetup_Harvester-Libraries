@@ -26,8 +26,9 @@
 #  4 the developer's email address
 #  5 the organization to which the project developer belongs
 #  6 the URL of the organization to which the project developer belongs
-#  7 parent harvester version
-#  8 renamed root directory (default: current directory)
+#  7 parent pom version
+#  8 harvester library version
+#  9 renamed root directory (default: current directory)
 # treat unset variables as an error when substituting
 set -u
 
@@ -147,11 +148,12 @@ RenameFileContent  () {
       --in-place=.tmp -e "s~\${authorOrganization}~${authorOrganization}~g" \
       --in-place=.tmp -e "s~\${authorOrganizationUrl}~${authorOrganizationUrl}~g" \
       --in-place=.tmp -e "s~\${creationYear}~${creationYear}~g" \
-      --in-place=.tmp -e "s~\${parentHarvesterVersion}~${parentHarvesterVersion}~g" $1 && rm -f $1.tmp
+      --in-place=.tmp -e "s~\${parentPomVersion}~${parentPomVersion}~g" \
+      --in-place=.tmp -e "s~\${harvesterLibraryVersion}~${harvesterLibraryVersion}~g" \
+	  $1 && rm -f $1.tmp
 }
 
 Main() {
-
   # convert arguments to readable variables, replace all ~ with -, because ~ is used for escaping the sed command
   providerName=$(echo "$1" | tr '~' '-')
   providerUrl=$(echo "$2" | tr '~' '-')
@@ -159,8 +161,9 @@ Main() {
   authorEmail=$(echo "$4" | tr '~' '-')
   authorOrganization=$(echo "$5" | tr '~' '-')
   authorOrganizationUrl=$(echo "$6" | tr '~' '-')
-  parentHarvesterVersion=$(echo "$7" | tr '~' '-')
-  targetDir="${8:-.}"
+  parentPomVersion=$(echo "$7" | tr '~' '-')
+  harvesterLibraryVersion=$(echo "$8" | tr '~' '-')
+  targetDir="${9:-.}"
   creationYear=$(GetCreationYear)
   
   echo "Renaming harvester project files in: $targetDir" >&2

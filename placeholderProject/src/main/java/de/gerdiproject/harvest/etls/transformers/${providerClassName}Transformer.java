@@ -30,7 +30,7 @@ public class ${providerClassName}Transformer extends AbstractIteratorTransformer
     @Override
     public void init(AbstractETL<?, ?> etl)
     {
-        super.init(etl);
+        // TODO retrieve parameter values from the ETL, if needed
     }
 
 
@@ -55,7 +55,14 @@ public class ${providerClassName}Transformer extends AbstractIteratorTransformer
      */
     private String createIdentifier(${providerClassName}VO source)
     {
-        // TODO retrieve a unique identifier from the source
-        return source.toString();
-    }    
+        // TODO retrieve a unique identifier from the source and remove exception
+		throw new UnsupportedOperationException();
+    }
+
+
+    @Override
+    public void clear()
+    {
+        // TODO close any open streams, if there are none, comment with "// nothing to clean up"        
+    }
 }

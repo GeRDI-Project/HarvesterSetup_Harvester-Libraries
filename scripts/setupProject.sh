@@ -142,8 +142,11 @@ Main() {
   cp -rfT "$sourceDir" "$projectDir"
   chmod -R o+rw "$projectDir"
   
-  # determine version of parent pom
-  local parentPomVersion=$(GetLatestMavenVersion "GeRDI-parent-harvester" "$useSnapshots")
+  # determine version of the parent pom
+  local parentPomVersion=$(GetLatestMavenVersion "GeRDI-parent" "$useSnapshots")
+  
+  # determine version of the harvester library
+  local harvesterLibraryVersion=$(GetLatestMavenVersion "RestfulHarvester-Library" "$useSnapshots")
   
   # replace placeholders
   "$scriptDir/renameSetup.sh" \
@@ -154,6 +157,7 @@ Main() {
     "$authorOrganization"\
     "$authorOrganizationUrl"\
     "$parentPomVersion"\
+    "$harvesterLibraryVersion"\
     "$projectDir" >&2
   
   # compile Maven
