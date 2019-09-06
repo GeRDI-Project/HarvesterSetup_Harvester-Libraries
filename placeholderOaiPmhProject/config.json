@@ -1,0 +1,16 @@
+{
+   "OaiPmhETL" : {
+      "parameters" : [
+         {
+            "key" : "hostUrl",
+            "value" : "${oaiPmhBaseUrl}",
+            "type" : "StringParameter"
+         },
+         {
+            "key" : "metadataPrefix",
+            "value" : "${metadataPrefix}",
+            "type" : "StringParameter"
+         }
+      ]
+   }
+}
