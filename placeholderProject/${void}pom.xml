@@ -25,6 +25,13 @@
 			<artifactId>RestfulHarvester-Library</artifactId>
 			<version>${restfulharvester.dependency.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>de.gerdi-project</groupId>
+			<artifactId>RestfulHarvester-Library</artifactId>
+			<version>${restfulharvester.dependency.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	
 	<developers>
