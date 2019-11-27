@@ -160,8 +160,8 @@ Main() {
     "$harvesterLibraryVersion"\
     "$projectDir" >&2
   
-  # compile Maven
-  mvn compile -Dcheck=disabled -f "$projectDir"
+  # compile Maven and format code
+  mvn compile -Dcheck=disabled -f "$projectDir" -Dformat
 }
 
 
