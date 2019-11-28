@@ -68,14 +68,20 @@ GetCreationYear () {
 #  Arguments: -
 #
 GetRepositorySlug () {
+  # get project root directory
+  local projectRoot
   projectRoot=$(git rev-parse --show-toplevel)
   if [ "$projectRoot" = "" ]; then
     projectRoot="."
   fi
+  
   # get image name from the remote origin URL of the git config file
+  local gitConfig
   gitConfig=$(cat projectRoot/.git/config)
+  
   if [ "$gitConfig" != "" ]; then
     echo "Reading .git/config" >&2
+	local repoSlug
     repoSlug=${gitConfig#*\[remote \"origin\"\]}
     repoSlug=${repoSlug#*url = }
     repoSlug=${repoSlug%.git*}
@@ -93,10 +99,11 @@ GetRepositorySlug () {
 #  1 - the directory that is to be processed
 #
 RenameFilesInDirectory () {
+  local file
   for file in "$1"/*
   do
     if [ -d "$file" ]; then
-      newDirName=$(RenameDirectory "$file")
+      local newDirName=$(RenameDirectory "$file")
       RenameFilesInDirectory "$newDirName"
     elif [ -f "$file" ]; then
       RenameFileContent "$file"
@@ -111,10 +118,12 @@ RenameFilesInDirectory () {
 #  1 - the file that is to be renamed
 #
 RenameFile  () {
-  renamedFile=$(echo "$1" | sed -e "s~\${providerClassName}~${providerClassName}~g" -e "s~\${void}~~g")
-  if [ "$renamedFile" != "$1" ]; then
-    mv -f "$1" "$renamedFile"
-    echo "Renamed $1 to $renamedFile" >&2
+  local filePath="$1"
+  local renamedFilePath=$(echo "$filePath" | sed -e "s~\${providerClassName}~${CLASS_NAME}~g" \
+                                -e "s~\${void}~~g")
+  if [ "$renamedFilePath" != "$filePath" ]; then
+    mv -f "$filePath" "$renamedFilePath"
+    echo "Renamed $filePath to $renamedFilePath" >&2
   fi
 }
 
@@ -124,8 +133,9 @@ RenameFile  () {
 #  1 - the directory that is to be renamed
 #
 RenameDirectory  () {
-  originalDir=$(realpath "$1")
-  renamedDir=$(realpath -q $(echo "$1" | sed -e "s~\${providerPackageName}~${providerPackageName}~g"))
+  local originalDir=$(realpath "$1")
+  local renamedDir=$(realpath -q $(echo "$1" | sed -e "s~\${providerPackageName}~${PACKAGE_NAME}~g" \
+                                             -e "s~\${providerClassName}~${CLASS_NAME}~g"))
   if [ "$originalDir" != "$renamedDir" ]; then
     mv -f "$originalDir" "$renamedDir"
     echo "Renamed $1 to $renamedDir" >&2
@@ -139,41 +149,39 @@ RenameDirectory  () {
 #  1 - the file of which the content is to be replaced
 #
 RenameFileContent  () {
-  sed --in-place=.tmp -e "s~\${providerPackageName}~${providerPackageName}~g" \
-      --in-place=.tmp -e "s~\${providerClassName}~${providerClassName}~g" \
-      --in-place=.tmp -e "s~\${providerName}~${providerName}~g" \
-      --in-place=.tmp -e "s~\${providerUrl}~${providerUrl}~g" \
-      --in-place=.tmp -e "s~\${authorFullName}~${authorFullName}~g" \
-      --in-place=.tmp -e "s~\${authorEmail}~${authorEmail}~g" \
-      --in-place=.tmp -e "s~\${authorOrganization}~${authorOrganization}~g" \
-      --in-place=.tmp -e "s~\${authorOrganizationUrl}~${authorOrganizationUrl}~g" \
-      --in-place=.tmp -e "s~\${creationYear}~${creationYear}~g" \
-      --in-place=.tmp -e "s~\${parentPomVersion}~${parentPomVersion}~g" \
-      --in-place=.tmp -e "s~\${harvesterLibraryVersion}~${harvesterLibraryVersion}~g" \
+  sed --in-place=.tmp -e "s~\${providerPackageName}~${PACKAGE_NAME}~g" \
+      --in-place=.tmp -e "s~\${providerClassName}~${CLASS_NAME}~g" \
+      --in-place=.tmp -e "s~\${providerName}~${PROVIDER_NAME}~g" \
+      --in-place=.tmp -e "s~\${providerUrl}~${PROVIDER_URL}~g" \
+      --in-place=.tmp -e "s~\${authorFullName}~${AUTHOR_NAME}~g" \
+      --in-place=.tmp -e "s~\${authorEmail}~${AUTHOR_EMAIL}~g" \
+      --in-place=.tmp -e "s~\${authorOrganization}~${AUTHOR_ORGA}~g" \
+      --in-place=.tmp -e "s~\${authorOrganizationUrl}~${AUTHOR_ORGA_URL}~g" \
+      --in-place=.tmp -e "s~\${creationYear}~${CREATION_YEAR}~g" \
+      --in-place=.tmp -e "s~\${parentPomVersion}~${PARENT_POM_VERSION}~g" \
+      --in-place=.tmp -e "s~\${harvesterLibraryVersion}~${HAR_LIB_VERSION}~g" \
 	  $1 && rm -f $1.tmp
 }
 
 Main() {
   # convert arguments to readable variables, replace all ~ with -, because ~ is used for escaping the sed command
-  providerName=$(echo "$1" | tr '~' '-')
-  providerUrl=$(echo "$2" | tr '~' '-')
-  authorFullName=$(echo "$3" | tr '~' '-')
-  authorEmail=$(echo "$4" | tr '~' '-')
-  authorOrganization=$(echo "$5" | tr '~' '-')
-  authorOrganizationUrl=$(echo "$6" | tr '~' '-')
-  parentPomVersion=$(echo "$7" | tr '~' '-')
-  harvesterLibraryVersion=$(echo "$8" | tr '~' '-')
-  targetDir="${9:-.}"
-  creationYear=$(GetCreationYear)
+  PROVIDER_NAME=$(echo "$1" | tr '~' '-')
+  PROVIDER_URL=$(echo "$2" | tr '~' '-')
+  AUTHOR_NAME=$(echo "$3" | tr '~' '-')
+  AUTHOR_EMAIL=$(echo "$4" | tr '~' '-')
+  AUTHOR_ORGA=$(echo "$5" | tr '~' '-')
+  AUTHOR_ORGA_URL=$(echo "$6" | tr '~' '-')
+  PARENT_POM_VERSION=$(echo "$7" | tr '~' '-')
+  HAR_LIB_VERSION=$(echo "$8" | tr '~' '-')
+  CREATION_YEAR=$(GetCreationYear)
   
-  echo "Renaming harvester project files in: $targetDir" >&2
-
   # create class and package names by removing illegal chars and forcing camel-case
-  illegalChars="  _-\\/{}()"
-  providerClassName=$(GetProviderClassName "$providerName" "$illegalChars")
-  providerPackageName=$(GetProviderPackageName "$providerClassName")
-
-  # run the main function on the current folder
+  CLASS_NAME=$(GetProviderClassName "$PROVIDER_NAME" "  _-\\/{}()")
+  PACKAGE_NAME=$(GetProviderPackageName "$CLASS_NAME")
+  
+  # run the main function on the current or selected folder
+  local targetDir="${9:-.}"
+  echo "Renaming harvester project files in: $targetDir" >&2
   RenameFilesInDirectory "$targetDir"
 }
 

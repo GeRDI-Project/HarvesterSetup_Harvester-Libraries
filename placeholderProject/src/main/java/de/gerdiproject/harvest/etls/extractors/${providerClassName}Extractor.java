@@ -31,7 +31,7 @@ public class ${providerClassName}Extractor extends AbstractIteratorExtractor<${p
     // protected fields that may be used by the inner iterator class
     protected final HttpRequester httpRequester;
 
-    private String version = null;
+    private String version;
     private int sourceDocumentCount = -1;
 
 
@@ -40,12 +40,13 @@ public class ${providerClassName}Extractor extends AbstractIteratorExtractor<${p
      */
     public ${providerClassName}Extractor()
     {
+        super();
         this.httpRequester = new HttpRequester();
     }
 
 
     @Override
-    public void init(AbstractETL<?, ?> etl)
+    public void init(final AbstractETL<?, ?> etl)
     {
         super.init(etl);
 
