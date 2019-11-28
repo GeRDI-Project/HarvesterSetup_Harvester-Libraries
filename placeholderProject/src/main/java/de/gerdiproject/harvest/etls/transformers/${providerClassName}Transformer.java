@@ -28,14 +28,14 @@ import de.gerdiproject.json.datacite.DataCiteJson;
 public class ${providerClassName}Transformer extends AbstractIteratorTransformer<${providerClassName}VO, DataCiteJson>
 {
     @Override
-    public void init(AbstractETL<?, ?> etl)
+    public void init(final AbstractETL<?, ?> etl)
     {
         // TODO retrieve parameter values from the ETL, if needed
     }
 
 
     @Override
-    protected DataCiteJson transformElement(${providerClassName}VO source)
+    protected DataCiteJson transformElement(final ${providerClassName}VO source)
     {
         // create the document
         final DataCiteJson document = new DataCiteJson(createIdentifier(source));
@@ -53,7 +53,7 @@ public class ${providerClassName}Transformer extends AbstractIteratorTransformer
      *
      * @return a unique identifier of this document
      */
-    private String createIdentifier(${providerClassName}VO source)
+    private String createIdentifier(final ${providerClassName}VO source)
     {
         // TODO retrieve a unique identifier from the source and remove exception
 		throw new UnsupportedOperationException();
